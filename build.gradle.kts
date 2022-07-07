@@ -31,6 +31,9 @@ dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-core")
   implementation("io.vertx:vertx-mongo-client:4.3.1")
+  implementation("io.vertx:vertx-web:4.3.1")
+  implementation("io.vertx:vertx-codegen:4.3.1")
+  implementation("io.vertx:vertx-stack-depchain:4.3.1")
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }

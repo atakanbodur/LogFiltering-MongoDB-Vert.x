@@ -5,6 +5,8 @@ import io.vertx.core.json.JsonObject;
 public class LogObject {
   private String logData;
 
+
+
   private String returnValueOf(String value) {
     int index;
     int nextIndex;
@@ -18,6 +20,7 @@ public class LogObject {
       return substr.substring(0, nextIndex);
     }
   }
+
   public JsonObject initJSONObject() {
     return new JsonObject()
       .put("remoteClient", returnValueOf("remoteClient: "))

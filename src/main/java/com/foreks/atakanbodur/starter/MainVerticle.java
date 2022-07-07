@@ -21,26 +21,30 @@ public class MainVerticle extends AbstractVerticle {
       .put("connection_string", "mongodb://192.168.0.136:27017").put("db_name", "logInfoProject");
     client = MongoClient.createShared(vertx, config);
 
-    //init log file
-    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
-
-    //get logs line by line from the log file
-    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
-      logObject.setLogData(bufferedLine.toString());
-      client.save("logInfos", logObject.initJSONObject(), result -> {
-        if (result.succeeded()) {
-          System.out.println("Inserted id: " + result.result());
-        } else
-          result.cause().printStackTrace();
-      });
-      System.out.println(logObject.initJSONObject());
-    });
-
-    //close file
-    asyncFile.handler(recordParser)
-      .endHandler(v -> {
-        asyncFile.close();
-        System.out.println("Done");
-      });
+//    //init log file
+//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
+//
+//    //get logs line by line from the log file
+//    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
+//      logObject.setLogData(bufferedLine.toString());
+//      client.save("logInfos", logObject.initJSONObject(), result -> {
+//        if (result.succeeded()) {
+//          System.out.println("Inserted id: " + result.result());
+//        } else
+//          result.cause().printStackTrace();
+//      });
+//      System.out.println(logObject.initJSONObject());
+//    });
+//
+//    //close file
+//    asyncFile.handler(recordParser)
+//      .endHandler(v -> {
+//        asyncFile.close();
+//        System.out.println("Done");
+//      });
+//
+//
+    LogObjectRepository repository = new LogObjectRepository(client);
+    repository.readAll();
   }
 }
