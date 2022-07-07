@@ -21,7 +21,7 @@ public class LogObjectRepository {
 
   public List<JsonObject> readAll() {
     List<JsonObject> jsonObjectList = new ArrayList<>();
-    dbClient.find(COLLECTION_NAME,null, res -> {
+    dbClient.find(COLLECTION_NAME,new JsonObject(), res -> {
       if (res.succeeded()){
         for (JsonObject json : res.result()) {
           jsonObjectList.add(json);
