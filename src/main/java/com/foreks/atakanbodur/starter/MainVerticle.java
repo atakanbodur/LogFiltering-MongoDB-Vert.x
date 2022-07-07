@@ -7,6 +7,7 @@ import io.vertx.core.file.OpenOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.web.Router;
 
 
 public class MainVerticle extends AbstractVerticle {
@@ -43,8 +44,20 @@ public class MainVerticle extends AbstractVerticle {
 //        System.out.println("Done");
 //      });
 //
+    LogObjectRepository logObjectRepository = new LogObjectRepository(client);
+    LogObjectService logObjectService = new LogObjectService(logObjectRepository);
+    LogObjectHandler logObjectHandler = new LogObjectHandler(logObjectService);
+    LogObjectRouter logObjectRouter = new LogObjectRouter(vertx,logObjectHandler);
+    Router router=Router.router(vertx);
+    logObjectRouter.buildLogObjectRouter(router);
 
-    LogObjectRepository repository = new LogObjectRepository(client);
-    repository.readByCompany("foreks");
+    vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
+      if (http.succeeded()) {
+        startPromise.complete();
+        System.out.println("HTTP server started on port 8888");
+      } else {
+        startPromise.fail(http.cause());
+      }
+    });
   }
 }

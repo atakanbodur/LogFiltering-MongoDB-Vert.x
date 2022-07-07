@@ -1,10 +1,7 @@
 package com.foreks.atakanbodur.starter;
 
-import io.reactivex.rxjava3.core.Single;
-import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
-import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
