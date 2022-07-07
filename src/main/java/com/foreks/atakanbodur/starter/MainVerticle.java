@@ -10,6 +10,76 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 
 
+/*
+TODO:
+rc.write(json)
+rc.end()
+ */
+/*
+TODO:
+[
+{Service gereksiz}
+microservisler çalıştığımız için gerek yok direkt
+{repo -> handler}
+]
+*/
+/*
+TODO:
+[
+servisleri ayır
+]
+*/
+/*
+TODO:
+[
+logobjectrouter içindekileri maine yaz
+]
+*/
+/*
+TODO:
+[
+handlelarda chain yapısı
+]
+*/
+/*
+TODO:
+1. servis
+
+/api/logs/summary?startDate=dd/MM/yyyy&endDate=dd/MM/YYYY&username=ATAKAN
+
+iki tarih alacak bu tarihler arasında ilgili kayda ait sorgularla ilgili istatistik dönecek
+
+input parametreleri:
+startDate
+EnDate;
+user:
+
+repsonse:
+{
+"totalRequest": 369,
+"averageProcessTime": 11,
+"totalSuccess": 330,
+"totalFailure": 39,
+"info": [
+
+],
+}
+
+not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
+*/
+/*
+TODO:
+2.  servis
+/api/logs/detail?startDate=dd/MM/yyyy&endDate=dd/MM/YYYY&username=ATAKAN&<status=OK>
+
+status -> null
+bütün kayıtlar
+status -> OK
+response status 200 olan kayıtlar dönecek
+status -> !OK
+response status 200 harici kayıtlar dönecek
+
+ */
 public class MainVerticle extends AbstractVerticle {
   static MongoClient client;
 

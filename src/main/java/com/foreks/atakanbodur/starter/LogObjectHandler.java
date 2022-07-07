@@ -1,5 +1,8 @@
 package com.foreks.atakanbodur.starter;
 
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -16,8 +19,9 @@ public class LogObjectHandler {
     return service.readAll();
   }
 
-  public List<JsonObject> readByCompany(RoutingContext rc) {
-    return service.readByCompany(rc.pathParam("company"));
+  public void readByCompany(RoutingContext rc) {
+    JsonArray jsonObjectList = service.readByCompany(rc.pathParam("company"));
+    rc.response().end("jsonObjectList.toBuffer()");
   }
 
   public List<JsonObject> readByUser(RoutingContext rc) {

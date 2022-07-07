@@ -1,5 +1,6 @@
 package com.foreks.atakanbodur.starter;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +24,18 @@ public class LogObjectRepository {
     return getJsonObjects(new JsonObject());
   }
 
-  public List<JsonObject> readByCompany(String company_) {
+  public JsonArray readByCompany(String company_) {
     JsonObject query = new JsonObject().put("company", trim(company_));
-    return getJsonObjects(query);
+    JsonArray jsonArray = new JsonArray();
+    dbClient.find(COLLECTION_NAME, query, res -> {
+      if (res.succeeded()) {
+        for (JsonObject json : res.result()) {
+          jsonArray.add(json);
+          System.out.println(json.encodePrettily());
+        }
+      } else res.cause().printStackTrace();
+    });
+    return jsonArray;
   }
 
   public List<JsonObject> readByUser(String user_){

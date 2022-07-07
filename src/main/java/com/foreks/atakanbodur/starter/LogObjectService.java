@@ -2,6 +2,7 @@ package com.foreks.atakanbodur.starter;
 
 
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class LogObjectService {
   public List<JsonObject> readAll(){
     return logObjectRepository.readAll();
   }
-  public List<JsonObject> readByCompany(String company){
+  public JsonArray readByCompany(String company){
     return logObjectRepository.readByCompany(company);
   }
   public List<JsonObject> readByUser(String user_){
