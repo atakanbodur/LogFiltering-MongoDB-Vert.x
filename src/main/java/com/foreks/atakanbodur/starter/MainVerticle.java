@@ -43,8 +43,8 @@ public class MainVerticle extends AbstractVerticle {
 //        System.out.println("Done");
 //      });
 //
-//
+
     LogObjectRepository repository = new LogObjectRepository(client);
-    repository.readAll();
+    repository.readByCompany("foreks");
   }
 }

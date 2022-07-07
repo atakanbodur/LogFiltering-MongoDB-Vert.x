@@ -24,7 +24,7 @@ public class LogObject {
   public JsonObject initJSONObject() {
     return new JsonObject()
       .put("remoteClient", returnValueOf("remoteClient: "))
-      .put("user", returnValueOf("method: "))
+      .put("user", returnValueOf("user: "))
       .put("method", returnValueOf("method: "))
       .put("statusCode", returnValueOf("statusCode: "))
       .put("processTimeMS", returnValueOf("processTimeMS: "))
