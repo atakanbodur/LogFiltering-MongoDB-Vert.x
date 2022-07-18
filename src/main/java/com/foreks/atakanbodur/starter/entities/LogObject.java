@@ -1,4 +1,4 @@
-package com.foreks.atakanbodur.starter;
+package com.foreks.atakanbodur.starter.entities;
 
 import io.vertx.core.json.JsonObject;
 
@@ -21,8 +21,18 @@ public class LogObject {
     }
   }
 
+  private String getDate(){
+    return logData.substring(0,9);
+  }
+
+  private String getTime(){
+    return logData.substring(11,18);
+  }
+
   public JsonObject initJSONObject() {
     return new JsonObject()
+      .put("date", getDate())
+      .put("time", getTime())
       .put("remoteClient", returnValueOf("remoteClient: "))
       .put("user", returnValueOf("user: "))
       .put("method", returnValueOf("method: "))

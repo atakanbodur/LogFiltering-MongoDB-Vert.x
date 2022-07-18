@@ -1,5 +1,8 @@
 package com.foreks.atakanbodur.starter;
 
+import com.foreks.atakanbodur.starter.entities.LogObject;
+import com.foreks.atakanbodur.starter.handlers.GenericHandler;
+import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.file.AsyncFile;
@@ -8,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.RecordParser;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 
 /*
@@ -15,32 +19,6 @@ TODO:
 rc.write(json)
 rc.end()
  */
-/*
-TODO:
-[
-{Service gereksiz}
-microservisler çalıştığımız için gerek yok direkt
-{repo -> handler}
-]
-*/
-/*
-TODO:
-[
-servisleri ayır
-]
-*/
-/*
-TODO:
-[
-logobjectrouter içindekileri maine yaz
-]
-*/
-/*
-TODO:
-[
-handlelarda chain yapısı
-]
-*/
 /*
 TODO:
 1. servis
@@ -89,42 +67,58 @@ public class MainVerticle extends AbstractVerticle {
     LogObject logObject = new LogObject();
     // init and configure client
     JsonObject config = new JsonObject()
-      .put("connection_string", "mongodb://192.168.0.136:27017").put("db_name", "logInfoProject");
+      .put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     client = MongoClient.createShared(vertx, config);
 
-//    //init log file
-//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
-//
-//    //get logs line by line from the log file
-//    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
-//      logObject.setLogData(bufferedLine.toString());
-//      client.save("logInfos", logObject.initJSONObject(), result -> {
-//        if (result.succeeded()) {
-//          System.out.println("Inserted id: " + result.result());
-//        } else
-//          result.cause().printStackTrace();
-//      });
-//      System.out.println(logObject.initJSONObject());
-//    });
-//
-//    //close file
-//    asyncFile.handler(recordParser)
-//      .endHandler(v -> {
-//        asyncFile.close();
-//        System.out.println("Done");
-//      });
-//
+    //init log file
+    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
+
+    //get logs line by line from the log file
+    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
+      logObject.setLogData(bufferedLine.toString());
+      client.save("logs", logObject.initJSONObject(), result -> {
+        if (result.succeeded()) {
+          System.out.println("Inserted id: " + result.result());
+        } else
+          result.cause().printStackTrace();
+      });
+    });
+
+    //close file
+    asyncFile.handler(recordParser)
+      .endHandler(v -> {
+        asyncFile.close();
+        System.out.println("Done");
+      });
+
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
-    LogObjectService logObjectService = new LogObjectService(logObjectRepository);
-    LogObjectHandler logObjectHandler = new LogObjectHandler(logObjectService);
-    LogObjectRouter logObjectRouter = new LogObjectRouter(vertx,logObjectHandler);
+    GenericHandler genericHandler = new GenericHandler(logObjectRepository);
+
     Router router=Router.router(vertx);
-    logObjectRouter.buildLogObjectRouter(router);
+    router.route("/api/logs*").handler(BodyHandler.create());
+    router.get("/api/logs").handler(genericHandler::readAll);
+    router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);
+    router.get("/api/logs/user/:user").handler(genericHandler::readByUser);
+    router.get("/api/logs/method/:method").handler(genericHandler::readByMethod);
+    router.get("/api/logs/statusCode/:statusCode").handler(genericHandler::readByStatusCode);
+    router.get("/api/logs/processTimeMS/:processTimeMS").handler(genericHandler::readByProcessTimeMS);
+    router.get("/api/logs/protocol/:protocol").handler(genericHandler::readByProtocol);
+    router.get("/api/logs/port/:port").handler(genericHandler::readByPort);
+    router.get("/api/logs/host/:host").handler(genericHandler::readByHost);
+    router.get("/api/logs/resource/:resource").handler(genericHandler::readByResource);
+    router.get("/api/logs/platform/:platform").handler(genericHandler::readByPlatform);
+    router.get("/api/logs/appName/:appName").handler(genericHandler::readByAppName);
+    router.get("/api/logs/appVersion/:appVersion").handler(genericHandler::readByAppVersion);
 
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {
         startPromise.complete();
         System.out.println("HTTP server started on port 8888");
+
+        String startDate;
+        String endDate;
+        String user;
+        String statusCode;
       } else {
         startPromise.fail(http.cause());
       }

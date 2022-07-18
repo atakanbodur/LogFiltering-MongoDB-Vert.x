@@ -1,4 +1,4 @@
-package com.foreks.atakanbodur.starter;
+package com.foreks.atakanbodur.starter.repositories;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -31,7 +31,6 @@ public class LogObjectRepository {
       if (res.succeeded()) {
         for (JsonObject json : res.result()) {
           jsonArray.add(json);
-          System.out.println(json.encodePrettily());
         }
       } else res.cause().printStackTrace();
     });
