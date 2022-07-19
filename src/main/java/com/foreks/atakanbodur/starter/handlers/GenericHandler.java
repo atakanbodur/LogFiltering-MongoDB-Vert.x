@@ -1,6 +1,7 @@
 package com.foreks.atakanbodur.starter.handlers;
 
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
+import io.vertx.core.Future;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -15,58 +16,56 @@ public class GenericHandler {
     this.logObjectRepository = logObjectRepository;
   }
 
-  public List<JsonObject> readAll(RoutingContext rc) {
-    return logObjectRepository.readAll();
+  public void readAll(RoutingContext rc) {
+    logObjectRepository.readAll();
   }
 
   public void readByCompany(RoutingContext rc) {
-    HttpServerResponse response = rc.response();
-    JsonArray jsonObjectList = logObjectRepository.readByCompany(rc.pathParam("company"));
-    response.write("hi!");
-    rc.end();
+   logObjectRepository.readByCompany(rc.pathParam("company"));
+
   }
 
-  public List<JsonObject> readByUser(RoutingContext rc) {
-    return logObjectRepository.readByUser(rc.pathParam("user"));
+  public void readByUser(RoutingContext rc) {
+    logObjectRepository.readByUser(rc.pathParam("user"));
   }
 
-  public List<JsonObject> readByMethod(RoutingContext rc) {
-    return logObjectRepository.readByMethod(rc.pathParam("method"));
+  public void readByMethod(RoutingContext rc) {
+    logObjectRepository.readByMethod(rc.pathParam("method"));
   }
 
-  public List<JsonObject> readByStatusCode(RoutingContext rc) {
-    return logObjectRepository.readByStatusCode(rc.pathParam("statusCode"));
+  public void readByStatusCode(RoutingContext rc) {
+    logObjectRepository.readByStatusCode(rc.pathParam("statusCode"));
   }
 
-  public List<JsonObject> readByProcessTimeMS(RoutingContext rc) {
-    return logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"));
+  public void readByProcessTimeMS(RoutingContext rc) {
+    logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"));
   }
 
-  public List<JsonObject> readByProtocol(RoutingContext rc) {
-    return logObjectRepository.readByProtocol(rc.pathParam("protocol"));
+  public void readByProtocol(RoutingContext rc) {
+    logObjectRepository.readByProtocol(rc.pathParam("protocol"));
   }
 
-  public List<JsonObject> readByPort(RoutingContext rc) {
-    return logObjectRepository.readByPort(rc.pathParam("port"));
+  public void readByPort(RoutingContext rc) {
+    logObjectRepository.readByPort(rc.pathParam("port"));
   }
 
-  public List<JsonObject> readByHost(RoutingContext rc) {
-    return logObjectRepository.readByHost(rc.pathParam("host"));
+  public void readByHost(RoutingContext rc) {
+    logObjectRepository.readByHost(rc.pathParam("host"));
   }
 
-  public List<JsonObject> readByResource(RoutingContext rc) {
-    return logObjectRepository.readByResource(rc.pathParam("resource"));
+  public void readByResource(RoutingContext rc) {
+    logObjectRepository.readByResource(rc.pathParam("resource"));
   }
 
-  public List<JsonObject> readByPlatform(RoutingContext rc) {
-    return logObjectRepository.readByPlatform(rc.pathParam("platform"));
+  public void readByPlatform(RoutingContext rc) {
+    logObjectRepository.readByPlatform(rc.pathParam("platform"));
   }
 
-  public List<JsonObject> readByAppName(RoutingContext rc) {
-    return logObjectRepository.readByAppName(rc.pathParam("appName"));
+  public void readByAppName(RoutingContext rc) {
+    logObjectRepository.readByAppName(rc.pathParam("appName"));
   }
 
-  public List<JsonObject> readByAppVersion(RoutingContext rc) {
-    return logObjectRepository.readByAppVersion(rc.pathParam("appVersion"));
+  public void readByAppVersion(RoutingContext rc) {
+    logObjectRepository.readByAppVersion(rc.pathParam("appVersion"));
   }
 }

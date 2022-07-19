@@ -2,6 +2,9 @@ package com.foreks.atakanbodur.starter.entities;
 
 import io.vertx.core.json.JsonObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class LogObject {
   private String logData;
 
@@ -21,12 +24,22 @@ public class LogObject {
     }
   }
 
-  private String getDate(){
-    return logData.substring(0,9);
+  private Date getDate(){
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    try {
+      Date date = simpleDateFormat.parse(logData.substring(0,10));
+      System.out.println("using with format()");
+      System.out.println(simpleDateFormat.format(date));
+      return date;
+    }
+    catch (Exception e) {
+      System.out.println(e.getCause());
+      return null;
+    }
   }
 
   private String getTime(){
-    return logData.substring(11,18);
+    return logData.substring(11,19);
   }
 
   public JsonObject initJSONObject() {

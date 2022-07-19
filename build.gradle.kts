@@ -33,7 +33,9 @@ dependencies {
   implementation("io.vertx:vertx-mongo-client:4.3.1")
   implementation("io.vertx:vertx-web:4.3.1")
   implementation("io.vertx:vertx-codegen:4.3.1")
-  implementation("io.vertx:vertx-stack-depchain:4.3.1")
+  implementation("io.vertx:vertx-rx-java3:4.3.2")
+  implementation("org.jetbrains:annotations:23.0.0");
+  implementation("com.fasterxml.jackson.core:jackson-databind");
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }

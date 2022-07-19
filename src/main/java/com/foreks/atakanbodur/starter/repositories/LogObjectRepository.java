@@ -1,105 +1,100 @@
 package com.foreks.atakanbodur.starter.repositories;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LogObjectRepository {
 
-  private static final String COLLECTION_NAME = "logInfos";
 
-  private MongoClient dbClient;
+  private final String COLLECTION_NAME = "logs";
+
+  private final MongoClient dbClient;
 
 
   public LogObjectRepository(MongoClient dbClient) {
     this.dbClient = dbClient;
   }
 
-  public List<JsonObject> readAll() {
-    List<JsonObject> jsonObjectList = new ArrayList<>();
-    return getJsonObjects(new JsonObject());
+  public void read(JsonObject query) {
+    System.out.println("Repository \n" + "query is equal to: \n" + query.encodePrettily());
+    getJsonObjects(query);
   }
 
-  public JsonArray readByCompany(String company_) {
+  public void readAll() {
+    getJsonObjects(new JsonObject());
+  }
+
+  public void readByCompany(String company_) {
     JsonObject query = new JsonObject().put("company", trim(company_));
-    JsonArray jsonArray = new JsonArray();
-    dbClient.find(COLLECTION_NAME, query, res -> {
-      if (res.succeeded()) {
-        for (JsonObject json : res.result()) {
-          jsonArray.add(json);
-        }
-      } else res.cause().printStackTrace();
-    });
-    return jsonArray;
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByUser(String user_){
+  public void readByUser(String user_) {
     JsonObject query = new JsonObject().put("user", trim(user_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByMethod(String method_){
+  public void readByMethod(String method_) {
     JsonObject query = new JsonObject().put("method", trim(method_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByStatusCode(String status_){
+  public void readByStatusCode(String status_) {
     JsonObject query = new JsonObject().put("statusCode", trim(status_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByProcessTimeMS(String processTimeMS_){
+  public void readByProcessTimeMS(String processTimeMS_) {
     JsonObject query = new JsonObject().put("processTimeMS", trim(processTimeMS_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByProtocol(String protocol_){
+  public void readByProtocol(String protocol_) {
     JsonObject query = new JsonObject().put("protocol", trim(protocol_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByPort(String port_){
+  public void readByPort(String port_) {
     JsonObject query = new JsonObject().put("port", trim(port_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByHost(String host_){
+  public void readByHost(String host_) {
     JsonObject query = new JsonObject().put("host", trim(host_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByResource(String resource_){
+  public void readByResource(String resource_) {
     JsonObject query = new JsonObject().put("resource", trim(resource_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByPlatform(String platform_){
+  public void readByPlatform(String platform_) {
     JsonObject query = new JsonObject().put("platform", trim(platform_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByAppName(String appName_){
+  public void readByAppName(String appName_) {
     JsonObject query = new JsonObject().put("appName", trim(appName_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  public List<JsonObject> readByAppVersion(String appVersion_){
+  public void readByAppVersion(String appVersion_) {
     JsonObject query = new JsonObject().put("appVersion", trim(appVersion_));
-    return getJsonObjects(query);
+    getJsonObjects(query);
   }
 
-  private String trim(String str_){
+
+  public String trim(String str_) {
     String str = str_.replaceAll("\\s", "");
     if (str.equals("")) return "null";
     else return str_; //TODO: return str_ or str?
   }
 
-  @NotNull
-  private List<JsonObject> getJsonObjects(JsonObject query) {
+  public void getJsonObjects(JsonObject query) {
     List<JsonObject> jsonObjectList = new ArrayList<>();
     dbClient.find(COLLECTION_NAME, query, res -> {
       if (res.succeeded()) {
@@ -109,6 +104,5 @@ public class LogObjectRepository {
         }
       } else res.cause().printStackTrace();
     });
-    return jsonObjectList;
   }
 }
