@@ -1,13 +1,8 @@
 package com.foreks.atakanbodur.starter.handlers;
 
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
-import io.vertx.core.Future;
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
-import java.util.List;
 
 public class GenericHandler {
   private final LogObjectRepository logObjectRepository;
@@ -21,7 +16,7 @@ public class GenericHandler {
   }
 
   public void readByCompany(RoutingContext rc) {
-   logObjectRepository.readByCompany(rc.pathParam("company"));
+    logObjectRepository.readByCompany(rc.pathParam("company"));
 
   }
 

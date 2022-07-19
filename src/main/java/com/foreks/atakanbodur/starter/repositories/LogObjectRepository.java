@@ -19,7 +19,6 @@ public class LogObjectRepository {
   }
 
   public void read(JsonObject query) {
-    System.out.println("Repository \n" + "query is equal to: \n" + query.encodePrettily());
     getJsonObjects(query);
   }
 

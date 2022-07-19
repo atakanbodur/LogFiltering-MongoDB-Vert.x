@@ -46,19 +46,6 @@ repsonse:
 
 not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
 */
-/*
-TODO:
-2.  servis
-/api/logs/detail?startDate=dd/MM/yyyy&endDate=dd/MM/YYYY&username=ATAKAN&<status=OK>
-
-status -> null
-bütün kayıtlar
-status -> OK
-response status 200 olan kayıtlar dönecek
-status -> !OK
-response status 200 harici kayıtlar dönecek
-
- */
 public class MainVerticle extends AbstractVerticle {
   static MongoClient client;
 
@@ -67,36 +54,37 @@ public class MainVerticle extends AbstractVerticle {
     //init logObject
     LogObject logObject = new LogObject();
     // init and configure client
-    JsonObject config = new JsonObject()
-      .put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
+    JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     client = MongoClient.createShared(vertx, config);
 
-    //init log file
-    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
-
-    //get logs line by line from the log file
-    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
-      logObject.setLogData(bufferedLine.toString());
-      client.save("logs", logObject.initJSONObject(), result -> {
-        if (result.succeeded()) {
-          System.out.println("Inserted id: " + result.result());
-        } else
-          result.cause().printStackTrace();
-      });
-    });
-
-    //close file
-    asyncFile.handler(recordParser)
-      .endHandler(v -> {
-        asyncFile.close();
-        System.out.println("Done");
-      });
+//    //init log file
+//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
+//
+//    //get logs line by line from the log file
+//    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
+//      logObject.setLogData(bufferedLine.toString());
+//      client.save("logs", logObject.initJSONObject(), result -> {
+//        if (result.succeeded()) {
+//          System.out.println("Inserted id: " + result.result());
+//        } else {
+//          System.out.println("resul not sucess");
+//          result.cause().printStackTrace();
+//        }
+//      });
+//    });
+//
+//    //close file
+//    asyncFile.handler(recordParser)
+//      .endHandler(v -> {
+//        asyncFile.close();
+//        System.out.println("Done");
+//      });
 
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
 
-    Router router=Router.router(vertx);
+    Router router = Router.router(vertx);
     router.route("/api/logs*").handler(BodyHandler.create());
     router.get("/api/logs").handler(genericHandler::readAll);
     router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);
@@ -116,7 +104,7 @@ public class MainVerticle extends AbstractVerticle {
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {
         startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
+        System.out.println("HTTP server started on port 8080");
       } else {
         startPromise.fail(http.cause());
       }
