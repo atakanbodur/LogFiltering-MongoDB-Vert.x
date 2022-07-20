@@ -29,7 +29,6 @@ public class LogObject {
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     try {
       Date date = simpleDateFormat.parse(logData.substring(0, 23));
-      System.out.println("using with format(): " + simpleDateFormat.format(date));
       return new JsonObject().put("$date", df.format(date));
     } catch (Exception e) {
       System.out.println(e.getCause());

@@ -17,11 +17,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 
 /*
 TODO:
-rc.write(json)
-rc.end()
- */
-/*
-TODO:
 1. servis
 
 /api/logs/summary?startDate=dd/MM/yyyy&endDate=dd/MM/YYYY&username=ATAKAN
@@ -58,7 +53,7 @@ public class MainVerticle extends AbstractVerticle {
     client = MongoClient.createShared(vertx, config);
 
 //    //init log file
-//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile.txt", new OpenOptions());
+//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile-org.txt", new OpenOptions());
 //
 //    //get logs line by line from the log file
 //    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
@@ -79,6 +74,7 @@ public class MainVerticle extends AbstractVerticle {
 //        asyncFile.close();
 //        System.out.println("Done");
 //      });
+
 
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);

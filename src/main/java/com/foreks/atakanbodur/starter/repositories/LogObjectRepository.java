@@ -1,7 +1,9 @@
 package com.foreks.atakanbodur.starter.repositories;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.web.RoutingContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,15 @@ public class LogObjectRepository {
   private final String COLLECTION_NAME = "logs";
 
   private final MongoClient dbClient;
+  private RoutingContext rc;
 
+  public RoutingContext getRc() {
+    return rc;
+  }
+
+  public void setRc(RoutingContext rc) {
+    this.rc = rc;
+  }
 
   public LogObjectRepository(MongoClient dbClient) {
     this.dbClient = dbClient;
@@ -94,7 +104,7 @@ public class LogObjectRepository {
   }
 
   public void getJsonObjects(JsonObject query) {
-    List<JsonObject> jsonObjectList = new ArrayList<>();
+    JsonArray jsonObjectList = new JsonArray();
     dbClient.find(COLLECTION_NAME, query, res -> {
       if (res.succeeded()) {
         for (JsonObject json : res.result()) {
@@ -102,6 +112,8 @@ public class LogObjectRepository {
           System.out.println(json.encodePrettily());
         }
       } else res.cause().printStackTrace();
+      this.rc.response().end(jsonObjectList.encodePrettily());
     });
   }
+
 }
