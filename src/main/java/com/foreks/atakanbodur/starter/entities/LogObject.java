@@ -1,9 +1,14 @@
-package com.foreks.atakanbodur.starter;
+package com.foreks.atakanbodur.starter.entities;
 
 import io.vertx.core.json.JsonObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class LogObject {
   private String logData;
+
 
   private String returnValueOf(String value) {
     int index;
@@ -18,10 +23,24 @@ public class LogObject {
       return substr.substring(0, nextIndex);
     }
   }
+
+  private JsonObject getDate() {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    try {
+      Date date = simpleDateFormat.parse(logData.substring(0, 23));
+      return new JsonObject().put("$date", df.format(date));
+    } catch (Exception e) {
+      System.out.println(e.getCause());
+      return null;
+    }
+  }
+
   public JsonObject initJSONObject() {
     return new JsonObject()
+      .put("logDate", getDate())
       .put("remoteClient", returnValueOf("remoteClient: "))
-      .put("user", returnValueOf("method: "))
+      .put("user", returnValueOf("user: "))
       .put("method", returnValueOf("method: "))
       .put("statusCode", returnValueOf("statusCode: "))
       .put("processTimeMS", returnValueOf("processTimeMS: "))
@@ -38,4 +57,6 @@ public class LogObject {
   public void setLogData(String logData) {
     this.logData = logData;
   }
+
+
 }
