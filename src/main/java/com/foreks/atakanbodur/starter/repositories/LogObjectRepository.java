@@ -5,95 +5,91 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class LogObjectRepository {
 
 
+  //TODO: consumer
+
   private final String COLLECTION_NAME = "logs";
 
   private final MongoClient dbClient;
-  private RoutingContext rc;
 
-  public RoutingContext getRc() {
-    return rc;
-  }
-
-  public void setRc(RoutingContext rc) {
-    this.rc = rc;
-  }
 
   public LogObjectRepository(MongoClient dbClient) {
     this.dbClient = dbClient;
   }
 
-  public void read(JsonObject query) {
-    getJsonObjects(query);
+  public void read(JsonObject query, RoutingContext rc) {
+    getJsonObjects(query, rc);
   }
 
-  public void readAll() {
-    getJsonObjects(new JsonObject());
+  public void readAll(RoutingContext rc) {
+    getJsonObjects(new JsonObject(), rc);
   }
 
-  public void readByCompany(String company_) {
+//  public void readByCompany(String company_, BiConsumer<Boolean, JsonArray> consumer)
+    public void readByCompany(String company_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("company", trim(company_));
-    getJsonObjects(query);
+//    getJsonObjects2(query, consumer);
+      getJsonObjects(query, rc);
   }
 
-  public void readByUser(String user_) {
+  public void readByUser(String user_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("user", trim(user_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByMethod(String method_) {
+  public void readByMethod(String method_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("method", trim(method_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByStatusCode(String status_) {
+  public void readByStatusCode(String status_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("statusCode", trim(status_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByProcessTimeMS(String processTimeMS_) {
+  public void readByProcessTimeMS(String processTimeMS_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("processTimeMS", trim(processTimeMS_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByProtocol(String protocol_) {
+  public void readByProtocol(String protocol_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("protocol", trim(protocol_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByPort(String port_) {
+  public void readByPort(String port_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("port", trim(port_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByHost(String host_) {
+  public void readByHost(String host_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("host", trim(host_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByResource(String resource_) {
+  public void readByResource(String resource_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("resource", trim(resource_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByPlatform(String platform_) {
+  public void readByPlatform(String platform_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("platform", trim(platform_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByAppName(String appName_) {
+  public void readByAppName(String appName_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("appName", trim(appName_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
-  public void readByAppVersion(String appVersion_) {
+  public void readByAppVersion(String appVersion_, RoutingContext rc) {
     JsonObject query = new JsonObject().put("appVersion", trim(appVersion_));
-    getJsonObjects(query);
+    getJsonObjects(query, rc);
   }
 
 
@@ -103,17 +99,33 @@ public class LogObjectRepository {
     else return str_; //TODO: return str_ or str?
   }
 
-  public void getJsonObjects(JsonObject query) {
+  public void getJsonObjects(JsonObject query, RoutingContext rc) {
     JsonArray jsonObjectList = new JsonArray();
     dbClient.find(COLLECTION_NAME, query, res -> {
       if (res.succeeded()) {
         for (JsonObject json : res.result()) {
           jsonObjectList.add(json);
-          System.out.println(json.encodePrettily());
+          System.out.println("DB operation:  json with id " + json.getString("_id"));
         }
       } else res.cause().printStackTrace();
-      this.rc.response().end(jsonObjectList.encodePrettily());
+      rc.response().end(jsonObjectList.encodePrettily());
     });
   }
 
+//  public BiConsumer<Boolean, JsonArray> getJsonObjects2(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
+//    JsonArray jsonObjectList = new JsonArray();
+//    dbClient.find(COLLECTION_NAME, query, res -> {
+//      if (res.succeeded()) {
+//        for (JsonObject json : res.result()) {
+//          jsonObjectList.add(json);
+//          System.out.println(json.encodePrettily());
+//        }
+//        consumer.accept(true ,jsonObjectList);
+//      } else{
+//        res.cause().printStackTrace();
+//        consumer.accept(false, null);
+//      }
+//      //this.rc.response().end(jsonObjectList.encodePrettily());
+//    });
+//  }
 }

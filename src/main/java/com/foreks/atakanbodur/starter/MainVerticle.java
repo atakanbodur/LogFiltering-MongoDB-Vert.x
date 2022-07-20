@@ -6,10 +6,7 @@ import com.foreks.atakanbodur.starter.handlers.DetailSearchHandler;
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.file.AsyncFile;
-import io.vertx.core.file.OpenOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.parsetools.RecordParser;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -41,6 +38,22 @@ repsonse:
 
 not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
 */
+/*
+TODO:
+Bulk operations
+ */
+/*
+TODO:
+logger
+ */
+/*
+TODO:
+file okumayı class'a çevir
+ */
+/*
+TODO:
+http response kodları
+ */
 public class MainVerticle extends AbstractVerticle {
   static MongoClient client;
 
@@ -51,6 +64,8 @@ public class MainVerticle extends AbstractVerticle {
     // init and configure client
     JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     client = MongoClient.createShared(vertx, config);
+
+
 
 //    //init log file
 //    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile-org.txt", new OpenOptions());

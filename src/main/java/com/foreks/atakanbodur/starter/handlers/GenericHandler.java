@@ -2,6 +2,7 @@ package com.foreks.atakanbodur.starter.handlers;
 
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import com.mongodb.BasicDBObjectBuilder;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -19,68 +20,66 @@ public class GenericHandler {
   }
 
   public void readAll(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readAll();
+    logObjectRepository.readAll(rc);
   }
 
   public void readByCompany(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByCompany(rc.pathParam("company"));
+//    logObjectRepository.readByCompany(rc.pathParam("company"), res -> {
+//      //hata ayıklama
+//
+//      if (res) {
+//
+//      }
+//
+//      else {
+//
+//      }
+//    });
+    logObjectRepository.readByCompany(rc.pathParam("company"), rc);
   }
 
   public void readByUser(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByUser(rc.pathParam("user"));
+    logObjectRepository.readByUser(rc.pathParam("user"), rc);
   }
 
   public void readByMethod(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByMethod(rc.pathParam("method"));
+    logObjectRepository.readByMethod(rc.pathParam("method"), rc);
   }
 
   public void readByStatusCode(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByStatusCode(rc.pathParam("statusCode"));
+    logObjectRepository.readByStatusCode(rc.pathParam("statusCode"), rc);
   }
 
   public void readByProcessTimeMS(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"));
+    logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"), rc);
   }
 
   public void readByProtocol(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByProtocol(rc.pathParam("protocol"));
+    logObjectRepository.readByProtocol(rc.pathParam("protocol"), rc);
   }
 
   public void readByPort(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByPort(rc.pathParam("port"));
+    logObjectRepository.readByPort(rc.pathParam("port"), rc);
   }
 
   public void readByHost(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByHost(rc.pathParam("host"));
+    logObjectRepository.readByHost(rc.pathParam("host"), rc);
   }
 
   public void readByResource(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByResource(rc.pathParam("resource"));
+    logObjectRepository.readByResource(rc.pathParam("resource"), rc);
   }
 
   public void readByPlatform(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByPlatform(rc.pathParam("platform"));
+    logObjectRepository.readByPlatform(rc.pathParam("platform"), rc);
   }
 
   public void readByAppName(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByAppName(rc.pathParam("appName"));
+    logObjectRepository.readByAppName(rc.pathParam("appName"), rc);
   }
 
   public void readByAppVersion(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByAppVersion(rc.pathParam("appVersion"));
+    logObjectRepository.readByAppVersion(rc.pathParam("appVersion"), rc);
   }
 
   public LogObjectRepository getLogObjectRepository() {
