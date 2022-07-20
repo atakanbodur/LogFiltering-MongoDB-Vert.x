@@ -87,15 +87,18 @@ public class GenericHandler {
     return logObjectRepository;
   }
 
-  protected JsonObject createQueryFromDateRange(JsonObject query) throws ParseException {
+  protected JsonObject createQueryFromDateRange(JsonObject query_) throws ParseException {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    Date startDate = simpleDateFormat.parse(query.getString("startDate"));
-    Date endDate = simpleDateFormat.parse(query.getString("endDate"));
+    Date startDate = simpleDateFormat.parse(query_.getString("startDate"));
+    Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
 
 
-    return new JsonObject().put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject().put("$date", df.format(startDate)))
-      .add("$lte", new JsonObject().put("$date", df.format(endDate))).get());
+    return new JsonObject().put("logDate",
+      BasicDBObjectBuilder.start("$gte", new JsonObject()
+          .put("$date", df.format(startDate)))
+        .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
+      .put("user", query_.getValue("user"));
   }
 }
 
