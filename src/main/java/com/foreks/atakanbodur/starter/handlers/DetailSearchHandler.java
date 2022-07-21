@@ -11,7 +11,6 @@ public class DetailSearchHandler extends GenericHandler {
   }
 
   public void read(RoutingContext rc) {
-    super.getLogObjectRepository().setRc(rc);
     JsonObject request = new JsonObject()
       .put("startDate", rc.request().getParam("startDate"))
       .put("endDate", rc.request().getParam("endDate"))
@@ -27,7 +26,13 @@ public class DetailSearchHandler extends GenericHandler {
         //response status 200 harici kayıtlar dönecek
         query.put("statusCode", new JsonObject().put("$ne", "200"));
       }
-      super.getLogObjectRepository().read(query);
+      super.getLogObjectRepository().read(query, (res, jsonArray) -> {
+        if (res) {
+          rc.response().end(jsonArray.encodePrettily());
+        } else {
+          rc.response().end("Repository error.");
+        }
+      });
 
     } catch (Exception e) {
       System.out.println(e.getMessage());

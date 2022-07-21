@@ -19,68 +19,134 @@ public class GenericHandler {
   }
 
   public void readAll(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readAll();
+    logObjectRepository.readAll((res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByCompany(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByCompany(rc.pathParam("company"));
+    logObjectRepository.readByCompany(rc.pathParam("company"), (res, jsonArray) -> {
+      //hata ayıklama
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByUser(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByUser(rc.pathParam("user"));
+    logObjectRepository.readByUser(rc.pathParam("user"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByMethod(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByMethod(rc.pathParam("method"));
+    logObjectRepository.readByUser(rc.pathParam("method"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByStatusCode(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByStatusCode(rc.pathParam("statusCode"));
+    logObjectRepository.readByStatusCode(rc.pathParam("statusCode"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByProcessTimeMS(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"));
+    logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByProtocol(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByProtocol(rc.pathParam("protocol"));
+    logObjectRepository.readByProtocol(rc.pathParam("protocol"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByPort(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByPort(rc.pathParam("port"));
+    logObjectRepository.readByPort(rc.pathParam("port"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByHost(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByHost(rc.pathParam("host"));
+    logObjectRepository.readByHost(rc.pathParam("host"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByResource(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByResource(rc.pathParam("resource"));
+    logObjectRepository.readByResource(rc.pathParam("resource"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByPlatform(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByPlatform(rc.pathParam("platform"));
+    logObjectRepository.readByPlatform(rc.pathParam("platform"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByAppName(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByAppName(rc.pathParam("appName"));
+    logObjectRepository.readByAppName(rc.pathParam("appName"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public void readByAppVersion(RoutingContext rc) {
-    this.logObjectRepository.setRc(rc);
-    logObjectRepository.readByAppVersion(rc.pathParam("appVersion"));
+    logObjectRepository.readByAppVersion(rc.pathParam("appVersion"), (res, jsonArray) -> {
+      if (res) {
+        rc.response().end(jsonArray.encodePrettily());
+      } else {
+        rc.response().end("Repository error.");
+      }
+    });
   }
 
   public LogObjectRepository getLogObjectRepository() {
@@ -95,9 +161,9 @@ public class GenericHandler {
 
 
     return new JsonObject().put("logDate",
-      BasicDBObjectBuilder.start("$gte", new JsonObject()
-          .put("$date", df.format(startDate)))
-        .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
+        BasicDBObjectBuilder.start("$gte", new JsonObject()
+            .put("$date", df.format(startDate)))
+          .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
       .put("user", query_.getValue("user"));
   }
 }
