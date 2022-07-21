@@ -3,10 +3,7 @@ package com.foreks.atakanbodur.starter.repositories;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
-import io.vertx.ext.web.RoutingContext;
-
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class LogObjectRepository {
 
@@ -22,84 +19,83 @@ public class LogObjectRepository {
     this.dbClient = dbClient;
   }
 
-  public void read(JsonObject query, RoutingContext rc) {
-    getJsonObjects(query, rc);
+  public void read(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
+    getJsonObjects(query, consumer);
   }
 
-  public void readAll(RoutingContext rc) {
-    getJsonObjects(new JsonObject(), rc);
+  public void readAll(BiConsumer<Boolean, JsonArray> consumer) {
+    getJsonObjects(new JsonObject(), consumer);
   }
 
-//  public void readByCompany(String company_, BiConsumer<Boolean, JsonArray> consumer)
-    public void readByCompany(String company_, RoutingContext rc) {
+  public void readByCompany(String company_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("company", trim(company_));
-//    getJsonObjects2(query, consumer);
-      getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByUser(String user_, RoutingContext rc) {
+  public void readByUser(String user_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("user", trim(user_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByMethod(String method_, RoutingContext rc) {
+  public void readByMethod(String method_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("method", trim(method_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByStatusCode(String status_, RoutingContext rc) {
+  public void readByStatusCode(String status_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("statusCode", trim(status_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByProcessTimeMS(String processTimeMS_, RoutingContext rc) {
+  public void readByProcessTimeMS(String processTimeMS_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("processTimeMS", trim(processTimeMS_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByProtocol(String protocol_, RoutingContext rc) {
+  public void readByProtocol(String protocol_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("protocol", trim(protocol_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByPort(String port_, RoutingContext rc) {
+  public void readByPort(String port_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("port", trim(port_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByHost(String host_, RoutingContext rc) {
+  public void readByHost(String host_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("host", trim(host_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByResource(String resource_, RoutingContext rc) {
+  public void readByResource(String resource_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("resource", trim(resource_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByPlatform(String platform_, RoutingContext rc) {
+  public void readByPlatform(String platform_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("platform", trim(platform_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByAppName(String appName_, RoutingContext rc) {
+  public void readByAppName(String appName_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("appName", trim(appName_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
-  public void readByAppVersion(String appVersion_, RoutingContext rc) {
+  public void readByAppVersion(String appVersion_, BiConsumer<Boolean, JsonArray> consumer) {
     JsonObject query = new JsonObject().put("appVersion", trim(appVersion_));
-    getJsonObjects(query, rc);
+    getJsonObjects(query, consumer);
   }
 
 
   public String trim(String str_) {
     String str = str_.replaceAll("\\s", "");
     if (str.equals("")) return "null";
-    else return str_; //TODO: return str_ or str?
+    else return str_;
   }
 
-  public void getJsonObjects(JsonObject query, RoutingContext rc) {
+
+  public void getJsonObjects(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
     JsonArray jsonObjectList = new JsonArray();
     dbClient.find(COLLECTION_NAME, query, res -> {
       if (res.succeeded()) {
@@ -107,25 +103,11 @@ public class LogObjectRepository {
           jsonObjectList.add(json);
           System.out.println("DB operation:  json with id " + json.getString("_id"));
         }
-      } else res.cause().printStackTrace();
-      rc.response().end(jsonObjectList.encodePrettily());
+        consumer.accept(true ,jsonObjectList);
+      } else{
+        res.cause().printStackTrace();
+        consumer.accept(false, null);
+      }
     });
   }
-
-//  public BiConsumer<Boolean, JsonArray> getJsonObjects2(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
-//    JsonArray jsonObjectList = new JsonArray();
-//    dbClient.find(COLLECTION_NAME, query, res -> {
-//      if (res.succeeded()) {
-//        for (JsonObject json : res.result()) {
-//          jsonObjectList.add(json);
-//          System.out.println(json.encodePrettily());
-//        }
-//        consumer.accept(true ,jsonObjectList);
-//      } else{
-//        res.cause().printStackTrace();
-//        consumer.accept(false, null);
-//      }
-//      //this.rc.response().end(jsonObjectList.encodePrettily());
-//    });
-//  }
 }

@@ -26,7 +26,13 @@ public class DetailSearchHandler extends GenericHandler {
         //response status 200 harici kayıtlar dönecek
         query.put("statusCode", new JsonObject().put("$ne", "200"));
       }
-      super.getLogObjectRepository().read(query, rc);
+      super.getLogObjectRepository().read(query, (res, jsonArray) -> {
+        if (res) {
+          rc.response().end(jsonArray.encodePrettily());
+        } else {
+          rc.response().end("Repository error.");
+        }
+      });
 
     } catch (Exception e) {
       System.out.println(e.getMessage());
