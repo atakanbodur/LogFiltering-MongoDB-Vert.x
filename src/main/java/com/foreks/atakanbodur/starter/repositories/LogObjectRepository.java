@@ -8,8 +8,6 @@ import java.util.function.BiConsumer;
 public class LogObjectRepository {
 
 
-  //TODO: consumer
-
   private final String COLLECTION_NAME = "logs";
 
   private final MongoClient dbClient;

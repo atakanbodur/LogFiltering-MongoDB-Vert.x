@@ -3,6 +3,7 @@ package com.foreks.atakanbodur.starter;
 import com.foreks.atakanbodur.starter.entities.LogObject;
 import com.foreks.atakanbodur.starter.handlers.GenericHandler;
 import com.foreks.atakanbodur.starter.handlers.DetailSearchHandler;
+import com.foreks.atakanbodur.starter.handlers.SummaryHandler;
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -94,6 +95,7 @@ public class MainVerticle extends AbstractVerticle {
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
+    SummaryHandler summaryHandler = new SummaryHandler(logObjectRepository);
 
     Router router = Router.router(vertx);
     router.route("/api/logs*").handler(BodyHandler.create());
@@ -111,6 +113,7 @@ public class MainVerticle extends AbstractVerticle {
     router.get("/api/logs/appName/:appName").handler(genericHandler::readByAppName);
     router.get("/api/logs/appVersion/:appVersion").handler(genericHandler::readByAppVersion);
     router.get("/api/logs/detail").handler(detailSearchHandler::read);
+    router.get("/api/logs/summary").handler(summaryHandler::read);
 
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {

@@ -50,7 +50,7 @@ public class GenericHandler {
   }
 
   public void readByMethod(RoutingContext rc) {
-    logObjectRepository.readByUser(rc.pathParam("method"), (res, jsonArray) -> {
+    logObjectRepository.readByMethod(rc.pathParam("method"), (res, jsonArray) -> {
       if (res) {
         rc.response().end(jsonArray.encodePrettily());
       } else {
