@@ -6,7 +6,7 @@ import io.vertx.ext.mongo.MongoClient;
 import java.util.function.BiConsumer;
 
 public class LogObjectRepository {
-
+  //TODO: compare and write info[]
 
   //TODO: consumer
 
@@ -93,7 +93,6 @@ public class LogObjectRepository {
     if (str.equals("")) return "null";
     else return str_;
   }
-
 
   public void getJsonObjects(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
     JsonArray jsonObjectList = new JsonArray();
