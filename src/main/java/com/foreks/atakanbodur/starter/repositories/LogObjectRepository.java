@@ -108,4 +108,12 @@ public class LogObjectRepository {
       }
     });
   }
+
+  public MongoClient getDbClient() {
+    return dbClient;
+  }
+
+  public String getCOLLECTION_NAME() {
+    return COLLECTION_NAME;
+  }
 }

@@ -2,7 +2,12 @@ package com.foreks.atakanbodur.starter.handlers;
 
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import com.mongodb.BasicDBObjectBuilder;
+import io.vertx.codegen.annotations.Nullable;
+import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.streams.ReadStream;
+import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 
 import java.text.DateFormat;
@@ -160,11 +165,27 @@ public class GenericHandler {
     Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
 
 
-    return new JsonObject().put("logDate",
-        BasicDBObjectBuilder.start("$gte", new JsonObject()
+    return new JsonObject()
+      .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
             .put("$date", df.format(startDate)))
           .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
       .put("user", query_.getValue("user"));
+  }
+
+protected void countDistinctFields() {
+//  JsonObject match = new JsonObject()
+//    new JsonObject().put("user", query_.getString("user"));
+//  JsonObject group = new JsonObject()
+//    .put(query_.getString("key"), "$"+query_.getString("key"));
+//
+//  JsonArray pipeline = new JsonArray()
+//    .add(new JsonObject().put("$match", new JsonObject().put("username", "atakan")));
+//  getLogObjectRepository().getDbClient().find(getLogObjectRepository().getCOLLECTION_NAME(), new JsonObject()
+//    .put("user", "atakan"), res -> {
+//
+//  });
+
+//  System.out.println(getLogObjectRepository().getDbClient().aggregate("logs", pipeline));
   }
 }
 

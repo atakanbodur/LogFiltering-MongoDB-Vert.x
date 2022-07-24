@@ -1,12 +1,14 @@
 package com.foreks.atakanbodur.starter;
 
-import com.foreks.atakanbodur.starter.entities.LogObject;
+//import com.foreks.atakanbodur.starter.entities.OpenLogFile;
 import com.foreks.atakanbodur.starter.handlers.GenericHandler;
 import com.foreks.atakanbodur.starter.handlers.DetailSearchHandler;
 import com.foreks.atakanbodur.starter.handlers.SummaryHandler;
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.file.OpenOptions;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
@@ -41,7 +43,7 @@ not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
 */
 /*
 TODO:
-Bulk operations
+Bulk/batch operations
  */
 /*
 TODO:
@@ -56,41 +58,15 @@ TODO:
 http response kodları
  */
 public class MainVerticle extends AbstractVerticle {
-  static MongoClient client;
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    //init logObject
-    LogObject logObject = new LogObject();
     // init and configure client
     JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
-    client = MongoClient.createShared(vertx, config);
+    MongoClient client = MongoClient.createShared(vertx, config);
 
-
-
-//    //init log file
-//    AsyncFile asyncFile = vertx.fileSystem().openBlocking("dummylogfile-org.txt", new OpenOptions());
-//
-//    //get logs line by line from the log file
-//    RecordParser recordParser = RecordParser.newDelimited("\n", bufferedLine -> {
-//      logObject.setLogData(bufferedLine.toString());
-//      client.save("logs", logObject.initJSONObject(), result -> {
-//        if (result.succeeded()) {
-//          System.out.println("Inserted id: " + result.result());
-//        } else {
-//          System.out.println("resul not sucess");
-//          result.cause().printStackTrace();
-//        }
-//      });
-//    });
-//
-//    //close file
-//    asyncFile.handler(recordParser)
-//      .endHandler(v -> {
-//        asyncFile.close();
-//        System.out.println("Done");
-//      });
-
+//    OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
+//    openLogFile.execute();
 
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);

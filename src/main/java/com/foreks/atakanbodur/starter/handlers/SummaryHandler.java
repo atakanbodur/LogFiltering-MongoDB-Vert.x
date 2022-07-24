@@ -39,6 +39,7 @@ public class SummaryHandler extends GenericHandler {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+    countDistinctFields();
   }
 
   private JsonObject analyse(Boolean hasUser, JsonArray jsonArray) {
@@ -55,6 +56,7 @@ public class SummaryHandler extends GenericHandler {
     }
     totalSuccess = (totalRequest - totalFailure);
     avgProcessTime = avgProcessTime / jsonArray.size();
+
 
     return new JsonObject()
       .put("totalRequest:", totalRequest)
