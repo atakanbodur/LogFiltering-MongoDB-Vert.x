@@ -50,6 +50,10 @@ logger
  */
 /*
 TODO:
+file okumayı class'a çevir
+ */
+/*
+TODO:
 http response kodları
  */
 public class MainVerticle extends AbstractVerticle {
@@ -59,16 +63,14 @@ public class MainVerticle extends AbstractVerticle {
     // init and configure client
     JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     MongoClient client = MongoClient.createShared(vertx, config);
-    //init file and exec reading/writing logs
+
     OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
     openLogFile.execute();
-    //init repository
+
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
-    //init handlers
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
 
-    //init api routes
     Router router = Router.router(vertx);
     router.route("/api/logs*").handler(BodyHandler.create());
     router.get("/api/logs").handler(genericHandler::readAll);
@@ -89,7 +91,7 @@ public class MainVerticle extends AbstractVerticle {
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {
         startPromise.complete();
-        System.out.println("HTTP server started on 8080");
+        System.out.println("HTTP server started on port 8080");
       } else {
         startPromise.fail(http.cause());
       }
