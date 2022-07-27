@@ -4,7 +4,7 @@
 ### Opening the File
 First I need to open the text file and read it line by line. I created a OpenLogFile.java in order to achieve this. The constructor of the class demands a `vertx`, a `filepath`, a `mongoclient` and an `openoptions`. It has a `execute()` function that simply will achieve my goal. 
 
-I create a LogObject so that I can write the attributes of it to the database when reading the log is complete and I use `io.vertx.core.file.AsyncFile` to open the file.
+I created a LogObject so that I can write the attributes of it to the database when reading the log is complete and, I use `io.vertx.core.file.AsyncFile` to open the file.
 
     logObject = new LogObject();  
     AsyncFile asyncFile = this.vertx.fileSystem().openBlocking(logFileName, new OpenOptions());
@@ -17,7 +17,7 @@ Then, I have to read each log one by one. I have used RecordParser to achieve th
 
 ## Write the logs to Mongo Database with relevant fields
 ### Determining Fields
-While reading the lines, for each new line, we have to determine and find the fields we need to save to our database.
+While reading the lines, for each new line, I had to determine and find the fields we need to save to the database.
 Here is an example log from my txt:
 
 > 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic nzqwodg5mjm6otg3nevemejfmtvfrtk3mzfenzhcrdu3nzrgrjiyqki= resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
