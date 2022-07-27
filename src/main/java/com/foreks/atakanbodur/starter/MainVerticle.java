@@ -1,9 +1,11 @@
 package com.foreks.atakanbodur.starter;
 
+
 import com.foreks.atakanbodur.starter.entities.LogObject;
 import com.foreks.atakanbodur.starter.entities.OpenLogFile;
 import com.foreks.atakanbodur.starter.handlers.GenericHandler;
 import com.foreks.atakanbodur.starter.handlers.DetailSearchHandler;
+import com.foreks.atakanbodur.starter.handlers.SummaryHandler;
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -12,6 +14,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+
 
 
 /*
@@ -42,7 +45,7 @@ not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
 */
 /*
 TODO:
-Bulk operations
+Bulk/batch operations
  */
 /*
 TODO:
@@ -59,6 +62,7 @@ public class MainVerticle extends AbstractVerticle {
     // init and configure client
     JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     MongoClient client = MongoClient.createShared(vertx, config);
+
     //init file and exec reading/writing logs
     OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
     openLogFile.execute();
@@ -67,6 +71,8 @@ public class MainVerticle extends AbstractVerticle {
     //init handlers
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
+    SummaryHandler summaryHandler = new SummaryHandler(logObjectRepository);
+
 
     //init api routes
     Router router = Router.router(vertx);
@@ -85,6 +91,7 @@ public class MainVerticle extends AbstractVerticle {
     router.get("/api/logs/appName/:appName").handler(genericHandler::readByAppName);
     router.get("/api/logs/appVersion/:appVersion").handler(genericHandler::readByAppVersion);
     router.get("/api/logs/detail").handler(detailSearchHandler::read);
+    router.get("/api/logs/summary").handler(summaryHandler::read);
 
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {
