@@ -3,12 +3,15 @@ package com.foreks.atakanbodur.starter.handlers;
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import com.mongodb.BasicDBObjectBuilder;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 public class GenericHandler {
@@ -50,7 +53,7 @@ public class GenericHandler {
   }
 
   public void readByMethod(RoutingContext rc) {
-    logObjectRepository.readByUser(rc.pathParam("method"), (res, jsonArray) -> {
+    logObjectRepository.readByMethod(rc.pathParam("method"), (res, jsonArray) -> {
       if (res) {
         rc.response().end(jsonArray.encodePrettily());
       } else {
@@ -159,12 +162,44 @@ public class GenericHandler {
     Date startDate = simpleDateFormat.parse(query_.getString("startDate"));
     Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
 
-
-    return new JsonObject().put("logDate",
-        BasicDBObjectBuilder.start("$gte", new JsonObject()
-            .put("$date", df.format(startDate)))
-          .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
+    return new JsonObject()
+      .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
+          .put("$date", df.format(startDate)))
+        .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
       .put("user", query_.getValue("user"));
+  }
+
+
+  public JsonArray countDistinctFields(JsonObject query_) throws ParseException {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    Date startDate = simpleDateFormat.parse(query_.getString("startDate"));
+    Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
+
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$match", new JsonObject()
+          .put("user", query_.getValue("user"))
+          .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
+              .put("$date", df.format(startDate)))
+            .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())))
+      .add(new JsonObject()
+        .put("$group", new JsonObject()
+          .put("_id", "$" + query_.getValue("filterFor"))
+          .put("count", new JsonObject().put("$sum", 1))));
+  }
+
+  public JsonArray createFacetQuery(Map<String,JsonArray> categories){
+    JsonObject facetObject = new JsonObject();
+    for(Map.Entry<String, JsonArray> me : categories.entrySet()){
+      facetObject.put("categorizeBy" + me.getKey(), me.getValue());
+    }
+
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$facet",
+          facetObject
+        ));
   }
 }
 
