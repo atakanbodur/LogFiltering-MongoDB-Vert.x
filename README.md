@@ -22,15 +22,15 @@ Here is an example log from my txt:
 
 > 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic nzqwodg5mjm6otg3nevemejfmtvfrtk3mzfenzhcrdu3nzrgrjiyqki= resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
 ### LogObject.java
-I wanted to get the `date`, `remoteClient`, `user`, `method`, `statusCode`, `processTimeMS`... fields from the log. In order to get these fields; I created a function named `returnValueOf()` that will take the `value` we want to search for in `LogObject.java` and called it from the `initJSONObject()`. Handling with the dates is a bit tricky but in here we just have to determine the format that the date is in, and put the `logData.substring(0, 23)` in to our JSONObject. Remember that the does not save Dates as a String but as a ISODate. If the value is non-existant, the value is assigned as **null**.
+I wanted to get the `date`, `remoteClient`, `user`, `method`, `statusCode`, `processTimeMS`... fields from the log. In order to get these fields; I created a function named `returnValueOf()` that will take the `key` we want to search for in `LogObject.java` and return the `value`, and called it from the `initJSONObject()`. Handling the dates is a bit tricky but in here, we just have to determine the format that the date is in, and put the `logData.substring(0, 23)` in to our JSONObject. Remember that the Mongo does not save Dates as a String but as a ISODate Object. If any of these values are non-existant, the value is assigned as **null**.
 ### Saving the log to the MongoDB
-After these steps, I only need to call the `initJSONObject()` and since the method returns a JSON Object, my log will be saved to the database without any problems. 
+After these steps, I only need to call the `initJSONObject()` and since the method returns a JSON Object, log will be saved to the database without any problems. 
 
     logObject.setLogData(bufferedLine.toString());  
     client.save("logs", logObject.initJSONObject(), result ->{//DO SMTH WITH THE RESULT}
 
 ## LogObjectRepository.java
-In order to get any data from the database, its in my best interest to create a `LogObjectRepository.java` class. This class will not implement any algorithms but simply will call dbClient.find() with the creating the relevant query.
+In order to get any data from the database, its in my best interest to create a `LogObjectRepository.java` class. This class will not implement any algorithms but simply will call dbClient.find() with the relevant query.
 `dbClient.find(collectionName, query, res -> {//DO SMTH WITH THE RESULT})`
 
 This class has `readAll()`, `readBy's()`, `read()` and `aggregate()` functions.  Each of these functions, apart from the `aggragate()`, calles `getJsonObjects()` with the relevant query.
@@ -41,17 +41,17 @@ Here is an example for `readByCompany():`
       getJsonObjects(query, consumer);  
     } 
 ## Create a Generic Service
-This service will use a `GenericHandler.java` like all other services to communicate between the repository and the user. The methods will get an `RoutingContext` and it should have the relevant field on its route. Here is an example url:
+This service will use a `GenericHandler.java` class, like all other services, to communicate between the repository and the user. The methods will get an `RoutingContext` and it should have the relevant field on its route. Here is an example url:
 http://localhost:8080/api/logs/company/xxxx. In order to get it from the repository, we call `logObjectRepository.readByCompany(rc.pathParam("company"), (res, jsonArray) -> {...}` and the method will send the result through `rc.response().end(jsonArray.encodePrettily())`
 
-The `GenericService.java` also has other methods that I use to create either queries or to implement logic for me to help create queries.
+The `GenericService.java` also has other methods that I use to create either queries or to implement a certain logic for me to help create queries.
 
  - `createQueryFromDateRange()`
  - `countDistinctFields()`
  - `createFacetQuery()`
  
  ### Creating Query to Get Logs From a Date Range
- This one was a tricky subject to overcome; I use `com.mongodb.BasicDBObjectBuilder` to create No-SQL queries to achieve my goal. First I get a `JsonObject` that has keys `startDate` and an `endDate` in `createQueryFromDateRange()`. Then I create two `DateFormat`'s: a `new SimpleDateFormat()` to convert `String date` to a `Date` object and an other one to convert the dates into a date format that the Mongo will understand(a.k.a. `ISODate`).
+ This one was a tricky subject to overcome; I've used `com.mongodb.BasicDBObjectBuilder` to create No-SQL queries to achieve my goal. First I get a `JsonObject` that has keys `startDate` and an `endDate` in `createQueryFromDateRange()`, then I create two `DateFormat`'s: a `new SimpleDateFormat()` to convert `String date` to a `Date` object and an other one to convert the dates into a date format that the Mongo will understand(a.k.a. `ISODate`).
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = simpleDateFormat.parse(query_.getString("startDate"));  
