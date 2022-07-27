@@ -1,6 +1,8 @@
 package com.foreks.atakanbodur.starter;
 
-//import com.foreks.atakanbodur.starter.entities.OpenLogFile;
+
+import com.foreks.atakanbodur.starter.entities.LogObject;
+import com.foreks.atakanbodur.starter.entities.OpenLogFile;
 import com.foreks.atakanbodur.starter.handlers.GenericHandler;
 import com.foreks.atakanbodur.starter.handlers.DetailSearchHandler;
 import com.foreks.atakanbodur.starter.handlers.SummaryHandler;
@@ -8,7 +10,6 @@ import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.file.OpenOptions;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
@@ -62,15 +63,18 @@ public class MainVerticle extends AbstractVerticle {
     JsonObject config = new JsonObject().put("connection_string", "mongodb://192.168.0.137:27017").put("db_name", "logInfoProject");
     MongoClient client = MongoClient.createShared(vertx, config);
 
-//    OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
-//    openLogFile.execute();
-
+    //init file and exec reading/writing logs
+    OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
+    openLogFile.execute();
+    //init repository
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
+    //init handlers
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
     SummaryHandler summaryHandler = new SummaryHandler(logObjectRepository);
 
 
+    //init api routes
     Router router = Router.router(vertx);
     router.route("/api/logs*").handler(BodyHandler.create());
     router.get("/api/logs").handler(genericHandler::readAll);
@@ -92,7 +96,7 @@ public class MainVerticle extends AbstractVerticle {
     vertx.createHttpServer().requestHandler(router).listen(8080, http -> {
       if (http.succeeded()) {
         startPromise.complete();
-        System.out.println("HTTP server started on port 8080");
+        System.out.println("HTTP server started on 8080");
       } else {
         startPromise.fail(http.cause());
       }
