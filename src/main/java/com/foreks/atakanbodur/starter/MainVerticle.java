@@ -15,6 +15,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
 
+
 /*
 TODO:
 1. servis
@@ -51,10 +52,6 @@ logger
  */
 /*
 TODO:
-file okumayı class'a çevir
- */
-/*
-TODO:
 http response kodları
  */
 public class MainVerticle extends AbstractVerticle {
@@ -72,6 +69,7 @@ public class MainVerticle extends AbstractVerticle {
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
     DetailSearchHandler detailSearchHandler = new DetailSearchHandler(logObjectRepository);
     SummaryHandler summaryHandler = new SummaryHandler(logObjectRepository);
+
 
     Router router = Router.router(vertx);
     router.route("/api/logs*").handler(BodyHandler.create());

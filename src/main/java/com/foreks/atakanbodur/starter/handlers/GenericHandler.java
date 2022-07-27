@@ -2,18 +2,16 @@ package com.foreks.atakanbodur.starter.handlers;
 
 import com.foreks.atakanbodur.starter.repositories.LogObjectRepository;
 import com.mongodb.BasicDBObjectBuilder;
-import io.vertx.codegen.annotations.Nullable;
-import io.vertx.core.Future;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.streams.ReadStream;
-import io.vertx.ext.mongo.MongoClient;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 public class GenericHandler {
@@ -164,28 +162,44 @@ public class GenericHandler {
     Date startDate = simpleDateFormat.parse(query_.getString("startDate"));
     Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
 
-
     return new JsonObject()
       .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
-            .put("$date", df.format(startDate)))
-          .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
+          .put("$date", df.format(startDate)))
+        .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
       .put("user", query_.getValue("user"));
   }
 
-protected void countDistinctFields() {
-//  JsonObject match = new JsonObject()
-//    new JsonObject().put("user", query_.getString("user"));
-//  JsonObject group = new JsonObject()
-//    .put(query_.getString("key"), "$"+query_.getString("key"));
-//
-//  JsonArray pipeline = new JsonArray()
-//    .add(new JsonObject().put("$match", new JsonObject().put("username", "atakan")));
-//  getLogObjectRepository().getDbClient().find(getLogObjectRepository().getCOLLECTION_NAME(), new JsonObject()
-//    .put("user", "atakan"), res -> {
-//
-//  });
 
-//  System.out.println(getLogObjectRepository().getDbClient().aggregate("logs", pipeline));
+  public JsonArray countDistinctFields(JsonObject query_) throws ParseException {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    Date startDate = simpleDateFormat.parse(query_.getString("startDate"));
+    Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
+
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$match", new JsonObject()
+          .put("user", query_.getValue("user"))
+          .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
+              .put("$date", df.format(startDate)))
+            .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())))
+      .add(new JsonObject()
+        .put("$group", new JsonObject()
+          .put("_id", "$" + query_.getValue("filterFor"))
+          .put("count", new JsonObject().put("$sum", 1))));
+  }
+
+  public JsonArray createFacetQuery(Map<String,JsonArray> categories){
+    JsonObject facetObject = new JsonObject();
+    for(Map.Entry<String, JsonArray> me : categories.entrySet()){
+      facetObject.put("categorizeBy" + me.getKey(), me.getValue());
+    }
+
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$facet",
+          facetObject
+        ));
   }
 }
 

@@ -1,7 +1,9 @@
 package com.foreks.atakanbodur.starter.repositories;
 
+import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.function.BiConsumer;
 
@@ -19,6 +21,15 @@ public class LogObjectRepository {
 
   public void read(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
     getJsonObjects(query, consumer);
+  }
+
+
+  public void aggregate(JsonArray pipeline, BiConsumer<Boolean, JsonObject> consumer) {
+    this.dbClient.aggregate(this.getCOLLECTION_NAME(), pipeline).handler(
+      jsonObject -> {
+        consumer.accept(true, jsonObject);
+      }
+    );
   }
 
   public void readAll(BiConsumer<Boolean, JsonArray> consumer) {
