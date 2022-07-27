@@ -14,43 +14,10 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
 
-/*
-TODO:
-1. servis
 
-/api/logs/summary?startDate=dd/MM/yyyy&endDate=dd/MM/YYYY&username=ATAKAN
-
-iki tarih alacak bu tarihler arasında ilgili kayda ait sorgularla ilgili istatistik dönecek
-
-input parametreleri:
-startDate
-EnDate;
-user:
-
-repsonse:
-{
-"totalRequest": 369,
-"averageProcessTime": 11,
-"totalSuccess": 330,
-"totalFailure": 39,
-"info": [
-
-],
-}
-
-not: query'de user yoksa ilgili tarihteki bütün kayıtlar söz konusu olur.
-*/
-/*
-TODO:
-Bulk operations
- */
 /*
 TODO:
 logger
- */
-/*
-TODO:
-file okumayı class'a çevir
  */
 /*
 TODO:
