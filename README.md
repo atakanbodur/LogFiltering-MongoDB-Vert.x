@@ -17,7 +17,7 @@ Then, I have to read each log one by one. I have used RecordParser to achieve th
 
 ## Write the logs to Mongo Database with relevant fields
 ### Determining Fields
-While reading the lines, for each new line, I had to determine and find the fields we need to save to the database.
+While reading the lines, for each new line, I had to determine and find the fields I need to save to the database.
 Here is an example log from my txt:
 
 > 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic nzqwodg5mjm6otg3nevemejfmtvfrtk3mzfenzhcrdu3nzrgrjiyqki= resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
