@@ -260,4 +260,3 @@ I didn't created a `Router` class as per request from my supervisor, I handled a
         router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);
         router.get("/api/logs/detail").handler(detailSearchHandler::read);  
 	    router.get("/api/logs/summary").handler(summaryHandler::read);
-
