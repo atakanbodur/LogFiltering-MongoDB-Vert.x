@@ -2,7 +2,7 @@
 
 ## Parse logs from a logfile.txt to a JSON object
 ### Opening the File
-First I need to open the text file and read it line by line. I created a OpenLogFile.java in order to achieve this. The constructor of the class demands a `vertx`, a `filepath`, a `mongoclient` and an `openoptions`. It has a `execute()` function that simply will achieve my goal. 
+First I need to open the text file and read it line by line. I created an OpenLogFile.java in order to achieve this. The constructor of the class demands a `vertx`, a `filepath`, a `mongoclient` and an `openoptions`. It has an `execute()` function that simply will achieve my goal. 
 
 I created a LogObject so that I can write the attributes of it to the database when reading the log is complete and, I use `io.vertx.core.file.AsyncFile` to open the file.
 
@@ -17,12 +17,12 @@ Then, I have to read each log one by one. I have used RecordParser to achieve th
 
 ## Write the logs to Mongo Database with relevant fields
 ### Determining Fields
-While reading the lines, for each new line, I had to determine and find the fields I need to save to the database.
+While reading the lines, for each new line, I had to determine and find the fields I needed to save to the database.
 Here is an example log from my txt:
 
 > 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic nzqwodg5mjm6otg3nevemejfmtvfrtk3mzfenzhcrdu3nzrgrjiyqki= resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
 ### LogObject.java
-I wanted to get the `date`, `remoteClient`, `user`, `method`, `statusCode`, `processTimeMS`... fields from the log. In order to get these fields; I created a function named `returnValueOf()` that will take the `key` we want to search for in `LogObject.java` and return the `value`, and called it from the `initJSONObject()`. Handling the dates is a bit tricky but in here, we just have to determine the format that the date is in, and put the `logData.substring(0, 23)` in to our JSONObject. Remember that the Mongo does not save Dates as a String but as a ISODate Object. If any of these values are non-existant, the value is assigned as **null**.
+I wanted to get the `date`, `remoteClient`, `user`, `method`, `statusCode`, `processTimeMS`... fields from the log. In order to get these fields; I created a function named `returnValueOf()` that will take the `key` we want to search for in `LogObject.java` and return the `value`, and called it from the `initJSONObject()`. Handling the dates is a bit tricky but here, we just have to determine the format that the date is in, and put the `logData.substring(0, 23)` into our JSONObject. Remember that the Mongo does not save Dates as a String but as an ISODate Object. If any of these values are non-existent, the value is assigned as **null**.
 ### Saving the log to the MongoDB
 After these steps, I only need to call the `initJSONObject()` and since the method returns a JSON Object, log will be saved to the database without any problems. 
 
@@ -30,10 +30,10 @@ After these steps, I only need to call the `initJSONObject()` and since the meth
     client.save("logs", logObject.initJSONObject(), result ->{//DO SMTH WITH THE RESULT}
 
 ## LogObjectRepository.java
-In order to get any data from the database, its in my best interest to create a `LogObjectRepository.java` class. This class will not implement any algorithms but simply will call dbClient.find() with the relevant query.
+In order to get any data from the database, it's in my best interest to create a `LogObjectRepository.java` class. This class will not implement any algorithms but simply will call dbClient.find() with the relevant query.
 `dbClient.find(collectionName, query, res -> {//DO SMTH WITH THE RESULT})`
 
-This class has `readAll()`, `readBy's()`, `read()` and `aggregate()` functions.  Each of these functions, apart from the `aggragate()`, calles `getJsonObjects()` with the relevant query.
+This class has `readAll()`, `readBy's()`, `read()` and `aggregate()` functions.  Each of these functions, apart from the `aggregate()`, calles `getJsonObjects()` with the relevant query.
 Here is an example for `readByCompany():`
 
     public void readByCompany(String company_, BiConsumer<Boolean, JsonArray> consumer) {  
@@ -70,7 +70,7 @@ I first need to determine which `key(s)` in the database I will search for. That
 ### Grouping and Counting Unique Values from a Dataset
 In my other service, I had to analyze the logs' details such as: how many different `remoteClient`'s have they used etc in a given date range and how many times they were used. In order to achieve this, I needed to create pipelines with multiple stages. I tested possible queries that I can create with MongoDB Compass and then created the most suitable one inside Java. The method takes a JsonObject with `key`'s `startDate`, `endDate`, `filterFor` and `user`. The `filterFor` value determines which unique value on my Documents' I want to count and output.
 
-On my case, I had to match logs with their `user` fields, then `group` them with their, for example, `remoteClient`'s. 
+In my case, I had to match logs with their `user` fields, then `group` them with their, for example, `remoteClient`'s. 
 The pipeline in the format of JSON looks like this:
 
     [{
@@ -183,7 +183,7 @@ Then, I send the query to the `LogObjectRepository.read()` and responde with the
     });
 
 ## Summary Service
-Summary Service will be used to give details about the statistics and, **if the user field is present**, info about the user's preferances. 
+Summary Service will be used to give details about the statistics and, **if the user field is present**info about the user's preferences. 
 Example result:
 
     [ {
@@ -213,7 +213,7 @@ Example result:
       } ]
     } ]
     
-To achieve this, I had to first `$match` the user and `$group` the results by respected `filterFor` value. Since I wanted to give multiple filtered results in one object, and since I wanted to obey async nature of the Vert.x, I had to send the pipeline as a one query. Therefore I created `countDistinctFields()` and `createFacetQuery()` functions. I explained how they do what they do above. 
+To achieve this, I had to first `$match` the user and `$group` the results by respected `filterFor` value. Since I wanted to give multiple filtered results in one object, and since I wanted to obey the async nature of Vert.x, I had to send the pipeline as a one query. Therefore I created `countDistinctFields()` and `createFacetQuery()` functions. I explained how they do what they do above. 
 
 I created a `SummaryHandler.java` class and it operates with the `read()` function. Again, from the Routing Context I got from the user, I put the startDate and the endDate to a JSON Object. Then I check if the `rc` I got has a field `username`, if it doesn't, I won't be needing the info:[...] field. Then I create the list of items I want to include in the info field:
 
@@ -222,7 +222,7 @@ I created a `SummaryHandler.java` class and it operates with the `read()` functi
     dataToBeFilteredFor.add("company");  
     dataToBeFilteredFor.add("statusCode");
 
-Then, I created an `analyse()` function to both serve the purpose of creating the statistics and the info field. The `read()` method sends its results to this function in a JSONArray and it handles it with:
+Then, I created an `analyze()` function to both serve the purpose of creating the statistics and the info field. The `read()` method sends its results to this function in a JSONArray and it handles it with:
 
     for (int i = 0; i < dbResults.size(); i++) {
       avgProcessTime += Integer.parseInt(dbResults.getJsonObject(i).getString("processTimeMS"));
@@ -233,7 +233,7 @@ Then, I created an `analyse()` function to both serve the purpose of creating th
     totalSuccess = (totalRequest - totalFailure);
     avgProcessTime = avgProcessTime / dbResults.size(); 
 
-After that, if the query had a `user` field, it calles a new function `createInfoField()`.
+After that, if the query had a `user` field, it called a new function `createInfoField()`.
 
 `createInfoField()` requires a query and a `List<String>` that I created above, in the `read()` function. Inside a loop, I fill a `Map<String, JsonArray> categories`  with the relevant `categoryName` and the one of the `pipeline`'s that will be used in `aggregate()` function.
 
@@ -244,10 +244,11 @@ After that, if the query had a `user` field, it calles a new function `createInf
 After that, I send the `categories` to the `createFacetQuery()` function inside the `GenericHandler.java`. Again, this will return a pipeline that will make it possible for me to process multiple aggregation pipelines.
 
 ## Routing Handlers
-I didn't created a `Router` class as per request from my supervisor, I handled all of the routing inside the `MainVerticle.java`. First I create a `Router` object and initilaize the routes:
+I didn't create a `Router` class as per request from my supervisor, I handled all of the routing inside the `MainVerticle.java`. First I create a `Router` object and initialize the routes:
 
         Router router = Router.router(vertx);
         router.get("/api/logs").handler(genericHandler::readAll);  
         router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);
         router.get("/api/logs/detail").handler(detailSearchHandler::read);  
 	    router.get("/api/logs/summary").handler(summaryHandler::read);
+
