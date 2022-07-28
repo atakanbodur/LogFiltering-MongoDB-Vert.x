@@ -20,7 +20,7 @@ Then, I have to read each log one by one. I have used RecordParser to achieve th
 While reading the lines, for each new line, I had to determine and find the fields I needed to save to the database.
 Here is an example log from my txt:
 
-> 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic nzqwodg5mjm6otg3nevemejfmtvfrtk3mzfenzhcrdu3nzrgrjiyqki= resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
+> 2021-07-30 09:42:12,778 INFO  -- remoteClient: 52.28.90.156 user: atakan method: GET statusCode: 200 processTimeMS: 294 x-forwarded-for=10.10.10.10 x-forwarded-proto=https x-forwarded-port=443 host=snapshot.xxx.com authorization=basic resource=default company=xxxx accept=application/json cache-control=no-cache pragma=no-cache user-agent=java/1.8.0_40 Thr:[vert.x-eventloop-thread-5] 
 ### LogObject.java
 I wanted to get the `date`, `remoteClient`, `user`, `method`, `statusCode`, `processTimeMS`... fields from the log. In order to get these fields; I created a function named `returnValueOf()` that will take the `key` we want to search for in `LogObject.java` and return the `value`, and called it from the `initJSONObject()`. Handling the dates is a bit tricky but here, we just have to determine the format that the date is in, and put the `logData.substring(0, 23)` into our JSONObject. Remember that the Mongo does not save Dates as a String but as an ISODate Object. If any of these values are non-existent, the value is assigned as **null**.
 ### Saving the log to the MongoDB
