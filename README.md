@@ -183,7 +183,7 @@ Then, I send the query to the `LogObjectRepository.read()` and responde with the
     });
 
 ## Summary Service
-Summary Service will be used to give details about the statistics and, **if the user field is present**info about the user's preferences. 
+Summary Service will be used to give details about the statistics and, **if the user field is present**info about the user's preferences in a given date range. 
 Example result:
 
     [ {
