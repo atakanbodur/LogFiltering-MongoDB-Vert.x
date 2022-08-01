@@ -38,9 +38,9 @@ public class MainVerticle extends AbstractVerticle {
     MongoClient client = MongoClient.createShared(vertx, config);
 
 
-    //init file and exec reading/writing logs
-    OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
-    openLogFile.execute();
+//    //init file and exec reading/writing logs
+//    OpenLogFile openLogFile = new OpenLogFile("dummylogfile-org.txt", new OpenOptions(), vertx, client);
+//    openLogFile.execute();
 
     LogObjectRepository logObjectRepository = new LogObjectRepository(client);
     GenericHandler genericHandler = new GenericHandler(logObjectRepository);
@@ -49,6 +49,7 @@ public class MainVerticle extends AbstractVerticle {
 
 
     Router router = Router.router(vertx);
+    router.route().handler(BodyHandler.create());
     router.route("/api/logs*").handler(BodyHandler.create());
     router.get("/api/logs").handler(genericHandler::readAll);
     router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);

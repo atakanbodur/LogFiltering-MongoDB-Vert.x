@@ -17,6 +17,10 @@ import java.util.Map;
 public class GenericHandler {
   private final LogObjectRepository logObjectRepository;
 
+  protected static final String CONTENT_TYPE_HEADER = "Content-Type";
+
+  protected static final String JSON_CONTENT_TYPE = "application/json; charset=UTF-8";
+
   public GenericHandler(LogObjectRepository logObjectRepository) {
     this.logObjectRepository = logObjectRepository;
   }
@@ -24,7 +28,10 @@ public class GenericHandler {
   public void readAll(RoutingContext rc) {
     logObjectRepository.readAll((res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -35,7 +42,10 @@ public class GenericHandler {
     logObjectRepository.readByCompany(rc.pathParam("company"), (res, jsonArray) -> {
       //hata ayıklama
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -45,7 +55,10 @@ public class GenericHandler {
   public void readByUser(RoutingContext rc) {
     logObjectRepository.readByUser(rc.pathParam("user"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -55,7 +68,10 @@ public class GenericHandler {
   public void readByMethod(RoutingContext rc) {
     logObjectRepository.readByMethod(rc.pathParam("method"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -65,7 +81,10 @@ public class GenericHandler {
   public void readByStatusCode(RoutingContext rc) {
     logObjectRepository.readByStatusCode(rc.pathParam("statusCode"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -75,7 +94,10 @@ public class GenericHandler {
   public void readByProcessTimeMS(RoutingContext rc) {
     logObjectRepository.readByProcessTimeMS(rc.pathParam("processTimeMS"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -85,7 +107,10 @@ public class GenericHandler {
   public void readByProtocol(RoutingContext rc) {
     logObjectRepository.readByProtocol(rc.pathParam("protocol"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -95,7 +120,10 @@ public class GenericHandler {
   public void readByPort(RoutingContext rc) {
     logObjectRepository.readByPort(rc.pathParam("port"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -105,7 +133,10 @@ public class GenericHandler {
   public void readByHost(RoutingContext rc) {
     logObjectRepository.readByHost(rc.pathParam("host"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -115,7 +146,10 @@ public class GenericHandler {
   public void readByResource(RoutingContext rc) {
     logObjectRepository.readByResource(rc.pathParam("resource"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -125,7 +159,10 @@ public class GenericHandler {
   public void readByPlatform(RoutingContext rc) {
     logObjectRepository.readByPlatform(rc.pathParam("platform"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -135,7 +172,10 @@ public class GenericHandler {
   public void readByAppName(RoutingContext rc) {
     logObjectRepository.readByAppName(rc.pathParam("appName"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -145,7 +185,10 @@ public class GenericHandler {
   public void readByAppVersion(RoutingContext rc) {
     logObjectRepository.readByAppVersion(rc.pathParam("appVersion"), (res, jsonArray) -> {
       if (res) {
-        rc.response().end(jsonArray.encodePrettily());
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
       } else {
         rc.response().end("Repository error.");
       }
@@ -163,9 +206,11 @@ public class GenericHandler {
     Date endDate = simpleDateFormat.parse(query_.getString("endDate"));
 
     return new JsonObject()
-      .put("logDate", BasicDBObjectBuilder.start("$gte", new JsonObject()
-          .put("$date", df.format(startDate)))
-        .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
+      .put("logDate",
+        BasicDBObjectBuilder.start("$gte",
+            new JsonObject()
+              .put("$date", df.format(startDate)))
+          .add("$lte", new JsonObject().put("$date", df.format(endDate))).get())
       .put("user", query_.getValue("user"));
   }
 
@@ -189,9 +234,9 @@ public class GenericHandler {
           .put("count", new JsonObject().put("$sum", 1))));
   }
 
-  public JsonArray createFacetQuery(Map<String,JsonArray> categories){
+  public JsonArray createFacetQuery(Map<String, JsonArray> categories) {
     JsonObject facetObject = new JsonObject();
-    for(Map.Entry<String, JsonArray> me : categories.entrySet()){
+    for (Map.Entry<String, JsonArray> me : categories.entrySet()) {
       facetObject.put("categorizeBy" + me.getKey(), me.getValue());
     }
 

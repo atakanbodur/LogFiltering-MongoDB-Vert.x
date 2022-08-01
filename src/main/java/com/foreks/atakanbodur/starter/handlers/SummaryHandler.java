@@ -38,7 +38,10 @@ public class SummaryHandler extends GenericHandler {
       super.getLogObjectRepository().read(query, (res, jsonArray) -> {
         if (res) {
           analyse(finalHasUser, request, dataToBeFilteredFor, jsonArray, (bool, jsonObject) -> {
-            rc.response().end(jsonObject.encodePrettily());
+            rc.response()
+              .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+              .setStatusCode(200)
+              .end(jsonObject.encodePrettily());
           });
         } else {
           rc.response().end("Repository error.");
@@ -85,7 +88,8 @@ public class SummaryHandler extends GenericHandler {
     Map<String, JsonArray> categories = new HashMap<>();
     try {
       for (String filterFor : dataToBeFilteredFor) {
-        categories.put(filterFor, createInfoPipeline(query, filterFor));
+        query.put("filterFor", filterFor);
+        categories.put(filterFor, countDistinctFields(query));
       }
     } catch (ParseException e) {
       e.printStackTrace();
@@ -93,12 +97,6 @@ public class SummaryHandler extends GenericHandler {
     JsonArray pipelineToAggregate = super.createFacetQuery(categories);
     getLogObjectRepository().aggregate(pipelineToAggregate, (bool, jsonObject) -> {
       consumer.accept(bool, new JsonArray().add(jsonObject));
-      System.out.println(jsonObject);
     });
-  }
-
-  private JsonArray createInfoPipeline(JsonObject query_, String filterFor) throws ParseException {
-    query_.put("filterFor", filterFor);
-    return countDistinctFields(query_);
   }
 }

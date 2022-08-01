@@ -15,7 +15,6 @@ public class OpenLogFile {
   Vertx vertx;
   LogObject logObject;
   MongoClient client;
-  AsyncFile file;
   Boolean hasExecuted;
 
   public OpenLogFile(String logFileName, OpenOptions options, Vertx vertx, MongoClient client) {

@@ -29,7 +29,10 @@ public class DetailSearchHandler extends GenericHandler {
       }
       super.getLogObjectRepository().read(query, (res, jsonArray) -> {
         if (res) {
-          rc.response().end(jsonArray.encodePrettily());
+          rc.response()
+            .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+            .setStatusCode(200)
+            .end(jsonArray.encodePrettily());
         } else {
           rc.response().end("Repository error.");
         }

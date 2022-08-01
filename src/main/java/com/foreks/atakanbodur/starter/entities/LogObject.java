@@ -10,7 +10,7 @@ public class LogObject {
   private String logData;
 
 
-  private String returnValueOf(String value) {
+    private String returnValueOf(String value) {
     int index;
     int nextIndex;
     index = logData.indexOf(value);
