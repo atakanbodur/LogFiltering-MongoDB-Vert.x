@@ -14,7 +14,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-
+import io.vertx.ext.web.handler.CorsHandler;
 
 
 /*
@@ -50,10 +50,21 @@ public class MainVerticle extends AbstractVerticle {
 
     Router router = Router.router(vertx);
     router.route().handler(BodyHandler.create());
+    router.route().handler(CorsHandler.create()
+      .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+      .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+      .allowedMethod(io.vertx.core.http.HttpMethod.OPTIONS)
+      .allowedHeader("Access-Control-Request-Method")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Headers")
+      .allowedHeader("Content-Type"));
     router.route("/api/logs*").handler(BodyHandler.create());
     router.get("/api/logs").handler(genericHandler::readAll);
     router.get("/api/logs/company/:company").handler(genericHandler::readByCompany);
+    router.get("/api/logs/company").handler(genericHandler::readByCompanyPaginate);
     router.get("/api/logs/user/:user").handler(genericHandler::readByUser);
+    router.get("/api/logs/user").handler(genericHandler::readByUserPaginate);
     router.get("/api/logs/method/:method").handler(genericHandler::readByMethod);
     router.get("/api/logs/statusCode/:statusCode").handler(genericHandler::readByStatusCode);
     router.get("/api/logs/processTimeMS/:processTimeMS").handler(genericHandler::readByProcessTimeMS);
@@ -62,7 +73,9 @@ public class MainVerticle extends AbstractVerticle {
     router.get("/api/logs/host/:host").handler(genericHandler::readByHost);
     router.get("/api/logs/resource/:resource").handler(genericHandler::readByResource);
     router.get("/api/logs/platform/:platform").handler(genericHandler::readByPlatform);
+    router.get("/api/logs/platform").handler(genericHandler::readByPlatformPaginate);
     router.get("/api/logs/appName/:appName").handler(genericHandler::readByAppName);
+    router.get("/api/logs/appName").handler(genericHandler::readByAppNamePaginate);
     router.get("/api/logs/appVersion/:appVersion").handler(genericHandler::readByAppVersion);
     router.get("/api/logs/detail").handler(detailSearchHandler::read);
     router.get("/api/logs/summary").handler(summaryHandler::read);

@@ -23,7 +23,6 @@ public class LogObjectRepository {
     getJsonObjects(query, consumer);
   }
 
-
   public void aggregate(JsonArray pipeline, BiConsumer<Boolean, JsonObject> consumer) {
     this.dbClient.aggregate(this.getCOLLECTION_NAME(), pipeline).handler(
       jsonObject -> {
@@ -105,12 +104,12 @@ public class LogObjectRepository {
 
 
   public void getJsonObjects(JsonObject query, BiConsumer<Boolean, JsonArray> consumer) {
+    System.out.println("QUERY: " + query);
     JsonArray jsonObjectList = new JsonArray();
     dbClient.find(COLLECTION_NAME, query, res -> {
       if (res.succeeded()) {
         for (JsonObject json : res.result()) {
           jsonObjectList.add(json);
-          System.out.println("DB operation:  json with id " + json.getString("_id"));
         }
         consumer.accept(true ,jsonObjectList);
       } else{

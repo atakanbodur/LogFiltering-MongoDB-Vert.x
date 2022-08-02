@@ -10,7 +10,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 
@@ -52,6 +51,20 @@ public class GenericHandler {
     });
   }
 
+  public void readByCompanyPaginate(RoutingContext rc) {
+    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("company", rc.request().getParam("company")),
+      rc.request().getParam("pageSize"),
+      rc.request().getParam("pageNumber")));
+
+    logObjectRepository.aggregate(pipeline,
+      (bool,jsonArray) -> {
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
+    });
+  }
+
   public void readByUser(RoutingContext rc) {
     logObjectRepository.readByUser(rc.pathParam("user"), (res, jsonArray) -> {
       if (res) {
@@ -63,6 +76,20 @@ public class GenericHandler {
         rc.response().end("Repository error.");
       }
     });
+  }
+
+  public void readByUserPaginate(RoutingContext rc) {
+    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("user", rc.request().getParam("user")),
+      rc.request().getParam("pageSize"),
+      rc.request().getParam("pageNumber")));
+
+    logObjectRepository.aggregate(pipeline,
+      (bool,jsonArray) -> {
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
+      });
   }
 
   public void readByMethod(RoutingContext rc) {
@@ -169,6 +196,20 @@ public class GenericHandler {
     });
   }
 
+  public void readByPlatformPaginate(RoutingContext rc) {
+    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("platform", rc.request().getParam("platform")),
+      rc.request().getParam("pageSize"),
+      rc.request().getParam("pageNumber")));
+
+    logObjectRepository.aggregate(pipeline,
+      (bool,jsonArray) -> {
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
+      });
+  }
+
   public void readByAppName(RoutingContext rc) {
     logObjectRepository.readByAppName(rc.pathParam("appName"), (res, jsonArray) -> {
       if (res) {
@@ -180,6 +221,20 @@ public class GenericHandler {
         rc.response().end("Repository error.");
       }
     });
+  }
+
+  public void readByAppNamePaginate(RoutingContext rc) {
+    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("appName", rc.request().getParam("appName")),
+      rc.request().getParam("pageSize"),
+      rc.request().getParam("pageNumber")));
+
+    logObjectRepository.aggregate(pipeline,
+      (bool,jsonArray) -> {
+        rc.response()
+          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+          .setStatusCode(200)
+          .end(jsonArray.encodePrettily());
+      });
   }
 
   public void readByAppVersion(RoutingContext rc) {
@@ -214,7 +269,6 @@ public class GenericHandler {
       .put("user", query_.getValue("user"));
   }
 
-
   public JsonArray countDistinctFields(JsonObject query_) throws ParseException {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -245,6 +299,23 @@ public class GenericHandler {
         .put("$facet",
           facetObject
         ));
+  }
+
+  public JsonArray createFacetQuery(JsonArray facetObject) {
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$facet",
+          new JsonObject().put("data", facetObject)
+        ));
+  }
+
+  public JsonArray addPaginationToQuery(JsonObject query_, String pageSize_, String pageNumber_) {
+    int pageSize = Integer.parseInt(pageSize_);
+    int pageNumber = Integer.parseInt(pageNumber_) - 1;
+    return new JsonArray()
+      .add(new JsonObject().put("$match", query_))
+      .add(new JsonObject().put("$skip", pageNumber * pageSize))
+      .add(new JsonObject().put("$limit", pageSize));
   }
 }
 

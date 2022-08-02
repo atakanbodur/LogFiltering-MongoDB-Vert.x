@@ -68,10 +68,10 @@ public class SummaryHandler extends GenericHandler {
     avgProcessTime = avgProcessTime / dbResults.size();
 
     JsonObject returnValue = new JsonObject()
-      .put("totalRequest:", totalRequest)
-      .put("totalSuccess:", totalSuccess)
-      .put("totalFailure:", totalFailure)
-      .put("avgProcessTimeMS:", avgProcessTime);
+      .put("totalRequest", totalRequest)
+      .put("totalSuccess", totalSuccess)
+      .put("totalFailure", totalFailure)
+      .put("avgProcessTimeMS", avgProcessTime);
 
 
     if (hasUser) {
