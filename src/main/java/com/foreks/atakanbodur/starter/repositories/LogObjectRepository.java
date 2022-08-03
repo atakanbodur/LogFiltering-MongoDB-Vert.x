@@ -1,5 +1,6 @@
 package com.foreks.atakanbodur.starter.repositories;
 
+import com.foreks.atakanbodur.starter.entities.LogObject;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;

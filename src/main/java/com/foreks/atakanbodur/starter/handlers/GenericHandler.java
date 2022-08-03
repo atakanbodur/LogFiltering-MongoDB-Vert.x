@@ -52,17 +52,16 @@ public class GenericHandler {
   }
 
   public void readByCompanyPaginate(RoutingContext rc) {
-    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("company", rc.request().getParam("company")),
-      rc.request().getParam("pageSize"),
-      rc.request().getParam("pageNumber")));
+    JsonArray paginationPipeline = addPaginationToQuery(new JsonObject()
+        .put("company", rc.request().getParam("company")),
+      rc.request().getParam("pageSize"), rc.request().getParam("pageNumber")
+    );
 
-    logObjectRepository.aggregate(pipeline,
-      (bool,jsonArray) -> {
-        rc.response()
-          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-          .setStatusCode(200)
-          .end(jsonArray.encodePrettily());
-    });
+    JsonArray countPipeline = new JsonArray()
+      .add(new JsonObject().put("$match", new JsonObject().put("company", rc.request().getParam("company"))))
+      .add(new JsonObject().put("$count", "count"));
+
+    callAggregate(rc, paginationPipeline, countPipeline);
   }
 
   public void readByUser(RoutingContext rc) {
@@ -79,17 +78,16 @@ public class GenericHandler {
   }
 
   public void readByUserPaginate(RoutingContext rc) {
-    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("user", rc.request().getParam("user")),
-      rc.request().getParam("pageSize"),
-      rc.request().getParam("pageNumber")));
+    JsonArray paginationPipeline = addPaginationToQuery(new JsonObject()
+        .put("user", rc.request().getParam("user")),
+      rc.request().getParam("pageSize"), rc.request().getParam("pageNumber")
+    );
 
-    logObjectRepository.aggregate(pipeline,
-      (bool,jsonArray) -> {
-        rc.response()
-          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-          .setStatusCode(200)
-          .end(jsonArray.encodePrettily());
-      });
+    JsonArray countPipeline = new JsonArray()
+      .add(new JsonObject().put("$match", new JsonObject().put("user", rc.request().getParam("user"))))
+      .add(new JsonObject().put("$count", "count"));
+
+    callAggregate(rc, paginationPipeline, countPipeline);
   }
 
   public void readByMethod(RoutingContext rc) {
@@ -197,17 +195,16 @@ public class GenericHandler {
   }
 
   public void readByPlatformPaginate(RoutingContext rc) {
-    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("platform", rc.request().getParam("platform")),
-      rc.request().getParam("pageSize"),
-      rc.request().getParam("pageNumber")));
+    JsonArray paginationPipeline = addPaginationToQuery(new JsonObject()
+        .put("platform", rc.request().getParam("platform")),
+      rc.request().getParam("pageSize"), rc.request().getParam("pageNumber")
+    );
 
-    logObjectRepository.aggregate(pipeline,
-      (bool,jsonArray) -> {
-        rc.response()
-          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-          .setStatusCode(200)
-          .end(jsonArray.encodePrettily());
-      });
+    JsonArray countPipeline = new JsonArray()
+      .add(new JsonObject().put("$match", new JsonObject().put("platform", rc.request().getParam("platform"))))
+      .add(new JsonObject().put("$count", "count"));
+
+    callAggregate(rc, paginationPipeline, countPipeline);
   }
 
   public void readByAppName(RoutingContext rc) {
@@ -224,17 +221,16 @@ public class GenericHandler {
   }
 
   public void readByAppNamePaginate(RoutingContext rc) {
-    JsonArray pipeline = createFacetQuery(addPaginationToQuery(new JsonObject().put("appName", rc.request().getParam("appName")),
-      rc.request().getParam("pageSize"),
-      rc.request().getParam("pageNumber")));
+    JsonArray paginationPipeline = addPaginationToQuery(new JsonObject()
+        .put("appName", rc.request().getParam("appName")),
+      rc.request().getParam("pageSize"), rc.request().getParam("pageNumber")
+    );
 
-    logObjectRepository.aggregate(pipeline,
-      (bool,jsonArray) -> {
-        rc.response()
-          .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-          .setStatusCode(200)
-          .end(jsonArray.encodePrettily());
-      });
+    JsonArray countPipeline = new JsonArray()
+      .add(new JsonObject().put("$match", new JsonObject().put("appName", rc.request().getParam("appName"))))
+      .add(new JsonObject().put("$count", "count"));
+
+    callAggregate(rc, paginationPipeline, countPipeline);
   }
 
   public void readByAppVersion(RoutingContext rc) {
@@ -309,13 +305,39 @@ public class GenericHandler {
         ));
   }
 
+  public JsonArray createFacetQuery(JsonObject facetObject) {
+    return new JsonArray()
+      .add(new JsonObject()
+        .put("$facet",
+          facetObject
+        ));
+  }
+
   public JsonArray addPaginationToQuery(JsonObject query_, String pageSize_, String pageNumber_) {
     int pageSize = Integer.parseInt(pageSize_);
     int pageNumber = Integer.parseInt(pageNumber_) - 1;
     return new JsonArray()
       .add(new JsonObject().put("$match", query_))
+      //sort
       .add(new JsonObject().put("$skip", pageNumber * pageSize))
       .add(new JsonObject().put("$limit", pageSize));
+  }
+
+  private void callAggregate(RoutingContext rc, JsonArray paginationPipeline, JsonArray countPipeline) {
+    JsonObject facetObject = new JsonObject().put("countData", countPipeline).put("paginationData", paginationPipeline);
+
+    logObjectRepository.aggregate(createFacetQuery(facetObject), (bool, json) -> {
+      JsonArray countData = (JsonArray) json.getValue("countData");
+      JsonObject count = (JsonObject) countData.getValue(0);
+
+      JsonArray paginationData = (JsonArray) json.getValue("paginationData");
+
+      rc.response()
+        .putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
+        .putHeader("x-count", count.getLong("count").toString())
+        .setStatusCode(200)
+        .end(paginationData.encodePrettily());
+    });
   }
 }
 
